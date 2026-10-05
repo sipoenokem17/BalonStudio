@@ -251,7 +251,7 @@
               id="btnUndo"
               class="flex-1 bg-slate-700 text-white text-xs font-bold py-2 rounded border border-slate-600"
             >
-              ↩️ Undo
+              ↩️️ Undo
             </button>
             <button
               id="btnRedo"
@@ -516,26 +516,78 @@
         class="w-full h-[55vh] md:h-full md:w-1/2 flex flex-col bg-slate-950 relative overflow-hidden flex-shrink-0"
         id="canvasParent"
       >
+        <!-- TOOLBAR FLOATING CANVAS 2D (TETAP MUNCUL WAKTU FULL SCREEN) -->
         <div
-          class="absolute top-3 left-3 z-20 bg-slate-800/90 backdrop-blur px-2.5 py-1.5 rounded border border-slate-700 text-xs flex items-center gap-2 shadow-lg"
+          class="absolute top-2 left-2 right-2 z-30 bg-slate-800/90 backdrop-blur px-2.5 py-1.5 rounded-lg border border-slate-700 text-xs flex flex-wrap items-center justify-between gap-1.5 shadow-xl"
         >
-          <span class="font-bold text-sky-400 text-[11px]"
-            >Canvas 2D (1024px)</span
-          >
-          <button
-            id="btnResetPanZoom"
-            class="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded text-slate-300"
-          >
-            Reset
-          </button>
-          <!-- TOMBOL FULLSCREEN CANVAS 2D -->
-          <button
-            id="btnFullscreen2D"
-            class="text-[10px] bg-sky-600 hover:bg-sky-500 font-bold px-2 py-0.5 rounded text-white transition"
-          >
-            ⛶ Fullscreen
-          </button>
+          <div class="flex items-center gap-1">
+            <span class="font-bold text-sky-400 text-[11px] hidden sm:inline"
+              >Canvas 2D</span
+            >
+            <button
+              id="btnFSColorPicker"
+              onclick="document.getElementById('drawColor').click()"
+              class="w-6 h-6 rounded border border-slate-600 flex items-center justify-center cursor-pointer"
+              title="Warna Kuas"
+            >
+              <div
+                id="colorIndicatorFS"
+                class="w-4 h-4 rounded-full bg-red-500"
+              ></div>
+            </button>
+            <div class="flex items-center gap-1 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700">
+              <span class="text-[9px] text-slate-400">✏️</span>
+              <input
+                type="range"
+                id="brushSizeFS"
+                min="2"
+                max="60"
+                value="12"
+                class="w-16 accent-sky-500 cursor-pointer"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1">
+            <button
+              id="btnFSUndo"
+              onclick="undo()"
+              class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2 py-1 rounded border border-slate-600"
+              title="Undo"
+            >
+              ↩️
+            </button>
+            <button
+              id="btnFSRedo"
+              onclick="redo()"
+              class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2 py-1 rounded border border-slate-600"
+              title="Redo"
+            >
+              ↪️️
+            </button>
+            <button
+              id="btnFSClear"
+              onclick="document.getElementById('btnClearCanvas').click()"
+              class="bg-rose-700 hover:bg-rose-600 text-white text-[10px] font-bold px-1.5 py-1 rounded"
+              title="Clear Coretan"
+            >
+              🧹
+            </button>
+            <button
+              id="btnResetPanZoom"
+              class="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded text-slate-300 font-semibold"
+            >
+              🔍 Reset
+            </button>
+            <button
+              id="btnFullscreen2D"
+              class="text-[10px] bg-sky-600 hover:bg-sky-500 font-bold px-2 py-1 rounded text-white shadow transition"
+            >
+              ⛶ Fullscreen
+            </button>
+          </div>
         </div>
+
         <div
           id="viewportViewport"
           class="w-full h-full flex items-center justify-center cursor-crosshair"
@@ -572,7 +624,6 @@
           >
             <div class="flex items-center justify-between gap-3">
               <span class="font-semibold text-sky-400">Visualisasi 3D</span>
-              <!-- TOMBOL FULLSCREEN 3D -->
               <button
                 id="btnFullscreen3D"
                 class="text-[10px] bg-sky-600 hover:bg-sky-500 font-bold px-2 py-0.5 rounded text-white"
@@ -589,7 +640,6 @@
                 />
                 Wireframe
               </label>
-              <!-- FITUR BARU: AUTO ROTATE 3D -->
               <label class="flex items-center gap-1 cursor-pointer">
                 <input
                   type="checkbox"
@@ -735,6 +785,25 @@
         toggleElementFullscreen(document.getElementById("canvasContainer"));
       });
 
+      // SYNC PENYETELAN KUAS & WARNA (UNTUK FULL SCREEN TOOLBAR)
+      const drawColorInput = document.getElementById("drawColor");
+      const colorIndicator = document.getElementById("colorIndicatorFS");
+      const brushSizeInput = document.getElementById("brushSize");
+      const brushSizeFSInput = document.getElementById("brushSizeFS");
+
+      drawColorInput.addEventListener("input", (e) => {
+        colorIndicator.style.backgroundColor = e.target.value;
+      });
+
+      brushSizeInput.addEventListener("input", (e) => {
+        brushSizeFSInput.value = e.target.value;
+      });
+
+      brushSizeFSInput.addEventListener("input", (e) => {
+        brushSizeInput.value = e.target.value;
+        document.getElementById("lblBrushSize").innerText = e.target.value;
+      });
+
       const PRESETS_DATA = {
         ideal: {
           panel: 16,
@@ -835,7 +904,7 @@
         };
       }
 
-      // THREE.JS SETUP DENGAN AUTO ROTATE ANIMATION
+      // THREE.JS SETUP
       const container = document.getElementById("canvasContainer");
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x0f172a);
@@ -961,9 +1030,11 @@
         e.preventDefault(),
       );
 
-      // PANNING JARI DI HP (2 JARI UNTUK PAN)
+      // PANNING & PINCH TO ZOOM UNTUK TOUCHSCREEN HP (2 JARI)
       let touchStartX = 0,
         touchStartY = 0;
+      let initialPinchDist = 0;
+      let initialScale = 0.5;
 
       parentContainer.addEventListener(
         "touchstart",
@@ -974,6 +1045,13 @@
               (e.touches[0].clientX + e.touches[1].clientX) / 2 - panX;
             touchStartY =
               (e.touches[0].clientY + e.touches[1].clientY) / 2 - panY;
+
+            // Hitung jarak pinch zoom 2 jari
+            initialPinchDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY,
+            );
+            initialScale = scale;
           }
         },
         { passive: false },
@@ -988,6 +1066,17 @@
               (e.touches[0].clientX + e.touches[1].clientX) / 2 - touchStartX;
             panY =
               (e.touches[0].clientY + e.touches[1].clientY) / 2 - touchStartY;
+
+            // Logika Pinch Zoom
+            const currentDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY,
+            );
+            if (initialPinchDist > 0) {
+              const zoomFactor = currentDist / initialPinchDist;
+              scale = Math.min(Math.max(initialScale * zoomFactor, 0.2), 3.0);
+            }
+
             applyTransform();
           }
         },
@@ -996,6 +1085,7 @@
 
       parentContainer.addEventListener("touchend", () => {
         isPanning = false;
+        initialPinchDist = 0;
       });
 
       parentContainer.addEventListener("mousedown", (e) => {
@@ -1256,7 +1346,7 @@
       ["mousedown", "touchstart"].forEach((evt) => {
         canvas2d.addEventListener(evt, (e) => {
           if (e.type === "mousedown" && e.button !== 0) return;
-          if (e.touches && e.touches.length > 1) return; // Abaikan jika multi-touch
+          if (e.touches && e.touches.length > 1) return;
           isDrawing = true;
           const pos = getCanvasPos(e);
           drawCtx.beginPath();
