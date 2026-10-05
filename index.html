@@ -80,24 +80,24 @@
   >
     <!-- NAVBAR MOBILE -->
     <div
-      class="md:hidden bg-slate-800 p-3 border-b border-slate-700 flex justify-between items-center z-50 flex-shrink-0"
+      class="md:hidden bg-slate-800 p-2.5 border-b border-slate-700 flex justify-between items-center z-50 flex-shrink-0"
     >
       <div>
-        <h1 class="text-sm font-bold text-sky-400">Balon Studio 3D</h1>
-        <p class="text-[9px] text-slate-400">Sistem Perancang Balon</p>
+        <h1 class="text-xs font-bold text-sky-400">Balon Studio 3D</h1>
+        <p class="text-[9px] text-slate-400">Touch-First Mobile Mode</p>
       </div>
       <button
         id="btnToggleSidebar"
-        class="bg-sky-600 text-white text-xs px-3 py-1.5 rounded font-bold shadow"
+        class="bg-sky-600 text-white text-xs px-2.5 py-1 rounded font-bold shadow"
       >
-        ⚙️ Panel Kontrol
+        ⚙️ Grid & Ukuran
       </button>
     </div>
 
-    <!-- SIDEBAR KONTROL -->
+    <!-- SIDEBAR KONTROL (SEKARANG KHUSUS GRID & EXPORT DI HP) -->
     <div
       id="sidebar"
-      class="fixed inset-x-0 top-[53px] bottom-0 z-40 bg-slate-800 p-4 border-r border-slate-700 flex flex-col justify-between overflow-y-auto w-full md:static md:w-80 md:inset-auto hidden md:flex flex-shrink-0"
+      class="fixed inset-x-0 top-[49px] bottom-0 z-40 bg-slate-800 p-4 border-r border-slate-700 flex flex-col justify-between overflow-y-auto w-full md:static md:w-80 md:inset-auto hidden md:flex flex-shrink-0"
     >
       <div>
         <div class="hidden md:block">
@@ -112,21 +112,21 @@
           <button
             id="tabGrid"
             onclick="switchTab('grid')"
-            class="flex-1 text-slate-400 hover:text-white text-xs font-bold py-2 rounded transition"
+            class="flex-1 bg-sky-600 text-white text-xs font-bold py-2 rounded transition"
           >
             Ukuran Grid
           </button>
           <button
             id="tabMotif"
             onclick="switchTab('motif')"
-            class="flex-1 bg-sky-600 text-white text-xs font-bold py-2 rounded transition"
+            class="flex-1 text-slate-400 hover:text-white text-xs font-bold py-2 rounded transition"
           >
             Editor Motif
           </button>
         </div>
 
         <!-- TAB 1: PENGATURAN GRID -->
-        <div id="sectionGrid" class="hidden space-y-3">
+        <div id="sectionGrid" class="space-y-3">
           <div
             class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-700 space-y-1.5"
           >
@@ -244,14 +244,14 @@
           </div>
         </div>
 
-        <!-- TAB 2: TOOLS DRAWING & MULTI-LAYER IMAGE -->
-        <div id="sectionMotif" class="space-y-3">
+        <!-- TAB 2: TOOLS DRAWING & LAYER (TERTATA DISINI JUGA FOR DESKTOP) -->
+        <div id="sectionMotif" class="hidden space-y-3">
           <div class="flex gap-2">
             <button
               id="btnUndo"
               class="flex-1 bg-slate-700 text-white text-xs font-bold py-2 rounded border border-slate-600"
             >
-              ↩️️ Undo
+              ↩ Undo
             </button>
             <button
               id="btnRedo"
@@ -300,12 +300,12 @@
             class="bg-slate-900/60 p-3 rounded-lg border border-slate-700 space-y-2"
           >
             <h2 class="text-xs font-bold text-sky-300 uppercase">
-              Layer Gambar & Motif
+              Daftar Layer Gambar
             </h2>
             <label
               class="block w-full text-center bg-sky-600 text-white text-xs py-2 rounded cursor-pointer font-semibold transition"
             >
-              + Tambah Layer Gambar / Motif
+              + Upload Gambar / Logo
               <input
                 type="file"
                 id="uploadImage"
@@ -316,7 +316,7 @@
 
             <div
               id="layerListContainer"
-              class="space-y-1 max-h-24 overflow-y-auto border border-slate-800 rounded p-1 bg-slate-950"
+              class="space-y-1 max-h-28 overflow-y-auto border border-slate-800 rounded p-1 bg-slate-950"
             >
               <p
                 id="lblNoLayer"
@@ -324,158 +324,6 @@
               >
                 Belum ada gambar yang di-upload
               </p>
-            </div>
-
-            <div
-              id="imgControls"
-              class="space-y-2 pt-2 border-t border-slate-800 opacity-50 pointer-events-none"
-            >
-              <div class="grid grid-cols-2 gap-1.5">
-                <button
-                  id="btnAutofitFit"
-                  class="bg-slate-700 text-white text-[10px] font-bold py-1 rounded border border-slate-600"
-                >
-                  📐 Autofit (Fit)
-                </button>
-                <button
-                  id="btnAutofitCover"
-                  class="bg-slate-700 text-white text-[10px] font-bold py-1 rounded border border-slate-600"
-                >
-                  🖼 Autofit (Cover)
-                </button>
-              </div>
-
-              <div
-                class="bg-slate-800 p-2 rounded border border-slate-700 space-y-1.5"
-              >
-                <div class="flex items-center justify-between">
-                  <span class="text-[10px] font-bold text-sky-300"
-                    >📐 Ukuran Gambar (px)</span
-                  >
-                  <label
-                    class="flex items-center gap-1 text-[9px] text-slate-300 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      id="chkLockAspect"
-                      checked
-                      class="rounded bg-slate-700 accent-sky-500"
-                    />
-                    Kunci Rasio
-                  </label>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <input
-                    type="number"
-                    id="imgWidthPx"
-                    min="10"
-                    max="2048"
-                    placeholder="W"
-                    class="w-full bg-slate-700 border border-slate-600 rounded p-1 text-xs text-white"
-                  />
-                  <input
-                    type="number"
-                    id="imgHeightPx"
-                    min="10"
-                    max="2048"
-                    placeholder="H"
-                    class="w-full bg-slate-700 border border-slate-600 rounded p-1 text-xs text-white"
-                  />
-                </div>
-              </div>
-
-              <div class="bg-slate-800 p-2 rounded border border-slate-700">
-                <label
-                  class="flex items-center justify-between text-[10px] font-bold text-sky-300 cursor-pointer"
-                >
-                  <span>🔁 Auto-Repeat / Tiling</span>
-                  <input
-                    type="checkbox"
-                    id="chkAutoRepeat"
-                    class="rounded bg-slate-700 accent-sky-500"
-                  />
-                </label>
-                <div id="tilingControls" class="hidden pt-1.5 space-y-1">
-                  <div>
-                    <label class="text-[9px] text-slate-400 block"
-                      >Ulang Horiz: <span id="lblRepeatX">4</span>x</label
-                    >
-                    <input
-                      type="range"
-                      id="repeatX"
-                      min="1"
-                      max="32"
-                      value="4"
-                      class="w-full accent-sky-500"
-                    />
-                  </div>
-                  <div>
-                    <label class="text-[9px] text-slate-400 block"
-                      >Ulang Vert: <span id="lblRepeatY">4</span>x</label
-                    >
-                    <input
-                      type="range"
-                      id="repeatY"
-                      min="1"
-                      max="32"
-                      value="4"
-                      class="w-full accent-sky-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label class="text-[9px] text-slate-400 block"
-                  >Rotasi: <span id="lblImgRot">0</span>°</label
-                >
-                <input
-                  type="range"
-                  id="imgRot"
-                  min="0"
-                  max="360"
-                  value="0"
-                  class="w-full accent-sky-500"
-                />
-              </div>
-              <div>
-                <label class="text-[9px] text-slate-400 block"
-                  >Skala: <span id="lblImgScale">100</span>%</label
-                >
-                <input
-                  type="range"
-                  id="imgScale"
-                  min="5"
-                  max="300"
-                  value="100"
-                  class="w-full accent-sky-500"
-                />
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <input
-                  type="range"
-                  id="imgPosX"
-                  min="-500"
-                  max="500"
-                  value="0"
-                  class="w-full accent-sky-500"
-                />
-                <input
-                  type="range"
-                  id="imgPosY"
-                  min="-500"
-                  max="500"
-                  value="0"
-                  class="w-full accent-sky-500"
-                />
-              </div>
-
-              <button
-                id="btnDeleteLayer"
-                class="w-full bg-rose-700 text-white text-xs font-bold py-1.5 rounded"
-              >
-                🗑 Hapus Layer
-              </button>
             </div>
           </div>
 
@@ -513,78 +361,123 @@
     >
       <!-- CANVAS 2D PETA MOTIF -->
       <div
-        class="w-full h-[55vh] md:h-full md:w-1/2 flex flex-col bg-slate-950 relative overflow-hidden flex-shrink-0"
+        class="w-full h-[60vh] md:h-full md:w-1/2 flex flex-col bg-slate-950 relative overflow-hidden flex-shrink-0"
         id="canvasParent"
       >
-        <!-- TOOLBAR FLOATING CANVAS 2D (TETAP MUNCUL WAKTU FULL SCREEN) -->
+        <!-- TOOLBAR ATAS: SAKLAR MODE DIRECT DI HP -->
         <div
-          class="absolute top-2 left-2 right-2 z-30 bg-slate-800/90 backdrop-blur px-2.5 py-1.5 rounded-lg border border-slate-700 text-xs flex flex-wrap items-center justify-between gap-1.5 shadow-xl"
+          class="absolute top-2 left-2 right-2 z-30 bg-slate-800/90 backdrop-blur px-2 py-1.5 rounded-lg border border-slate-700 text-xs flex items-center justify-between shadow-xl gap-1"
         >
-          <div class="flex items-center gap-1">
-            <span class="font-bold text-sky-400 text-[11px] hidden sm:inline"
-              >Canvas 2D</span
-            >
+          <!-- MODE SELECTOR DI HP -->
+          <div class="flex items-center gap-1 bg-slate-900 p-0.5 rounded border border-slate-700">
             <button
-              id="btnFSColorPicker"
-              onclick="document.getElementById('drawColor').click()"
-              class="w-6 h-6 rounded border border-slate-600 flex items-center justify-center cursor-pointer"
-              title="Warna Kuas"
+              id="modeDraw"
+              onclick="setInteractionMode('draw')"
+              class="text-[10px] font-bold px-2 py-1 rounded bg-sky-600 text-white"
             >
-              <div
-                id="colorIndicatorFS"
-                class="w-4 h-4 rounded-full bg-red-500"
-              ></div>
+              ✏️ Coret
             </button>
-            <div class="flex items-center gap-1 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-700">
-              <span class="text-[9px] text-slate-400">✏️</span>
+            <button
+              id="modeLayer"
+              onclick="setInteractionMode('layer')"
+              class="text-[10px] font-bold px-2 py-1 rounded text-slate-400 hover:text-white"
+            >
+              🖼️ Gambar
+            </button>
+            <button
+              id="modePan"
+              onclick="setInteractionMode('pan')"
+              class="text-[10px] font-bold px-2 py-1 rounded text-slate-400 hover:text-white"
+            >
+              ✋ Pan/Zoom
+            </button>
+          </div>
+
+          <div class="flex items-center gap-1">
+            <button
+              onclick="undo()"
+              class="bg-slate-700 text-white text-[10px] font-bold px-2 py-1 rounded border border-slate-600"
+            >
+              ↩
+            </button>
+            <button
+              onclick="redo()"
+              class="bg-slate-700 text-white text-[10px] font-bold px-2 py-1 rounded border border-slate-600"
+            >
+              ↪
+            </button>
+            <button
+              id="btnFullscreen2D"
+              class="text-[10px] bg-sky-600 font-bold px-2 py-1 rounded text-white"
+            >
+              ⛶ Full
+            </button>
+          </div>
+        </div>
+
+        <!-- FLOATING TOOLBAR KURSOR GAMBAR (AKAN MUNCUL PAS MODE GAMBAR & ADA LAYER TERPILIH) -->
+        <div
+          id="layerTouchBar"
+          class="absolute bottom-3 left-2 right-2 z-30 bg-slate-800/95 backdrop-blur p-2 rounded-lg border border-sky-500/50 shadow-2xl flex flex-col gap-1.5 transition-all duration-200 hidden"
+        >
+          <div class="flex items-center justify-between text-[10px] font-bold text-sky-300">
+            <span id="lblActiveLayerName" class="truncate max-w-[150px]">📷 Layer 1</span>
+            <div class="flex gap-1">
+              <button onclick="autofitActiveLayer('fit')" class="bg-slate-700 px-1.5 py-0.5 rounded border border-slate-600 text-white">Fit</button>
+              <button onclick="autofitActiveLayer('cover')" class="bg-slate-700 px-1.5 py-0.5 rounded border border-slate-600 text-white">Cover</button>
+              <button onclick="deleteActiveLayer()" class="bg-rose-700 px-1.5 py-0.5 rounded text-white">🗑 Hapus</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-[9px] text-slate-300">
+            <label class="flex items-center justify-between bg-slate-900 px-2 py-1 rounded border border-slate-700">
+              <span>🔁 Auto Repeat</span>
+              <input type="checkbox" id="chkAutoRepeatTouch" onchange="toggleRepeatTouch(this.checked)" class="accent-sky-500" />
+            </label>
+            <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded border border-slate-700">
+              <span>🔄 Rotasi:</span>
+              <input type="range" id="rotTouch" min="0" max="360" value="0" oninput="setRotTouch(this.value)" class="w-full accent-sky-500" />
+            </div>
+          </div>
+          <p class="text-[8px] text-slate-400 text-center">💡 Sentuh & geser gambar di canvas untuk memindahkan posisi. Pakai 2 jari untuk zoom/skala.</p>
+        </div>
+
+        <!-- FLOATING TOOLBAR MODE KUAS (MUNCUL PAS MODE CORET) -->
+        <div
+          id="drawTouchBar"
+          class="absolute bottom-3 left-2 right-2 z-30 bg-slate-800/90 backdrop-blur p-2 rounded-lg border border-slate-700 shadow-xl flex items-center justify-between gap-2"
+        >
+          <div class="flex items-center gap-1.5">
+            <button
+              onclick="document.getElementById('drawColor').click()"
+              class="w-7 h-7 rounded border border-slate-600 flex items-center justify-center bg-slate-900"
+            >
+              <div id="colorIndicatorFS" class="w-4 h-4 rounded-full bg-red-500"></div>
+            </button>
+            <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded border border-slate-700">
+              <span class="text-[9px] text-slate-400">Ukuran:</span>
               <input
                 type="range"
                 id="brushSizeFS"
                 min="2"
                 max="60"
                 value="12"
-                class="w-16 accent-sky-500 cursor-pointer"
+                class="w-20 accent-sky-500"
               />
             </div>
           </div>
-
-          <div class="flex items-center gap-1">
+          <div class="flex gap-1">
             <button
-              id="btnFSUndo"
-              onclick="undo()"
-              class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2 py-1 rounded border border-slate-600"
-              title="Undo"
-            >
-              ↩️
-            </button>
-            <button
-              id="btnFSRedo"
-              onclick="redo()"
-              class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold px-2 py-1 rounded border border-slate-600"
-              title="Redo"
-            >
-              ↪️️
-            </button>
-            <button
-              id="btnFSClear"
               onclick="document.getElementById('btnClearCanvas').click()"
-              class="bg-rose-700 hover:bg-rose-600 text-white text-[10px] font-bold px-1.5 py-1 rounded"
-              title="Clear Coretan"
+              class="bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded"
             >
-              🧹
+              🧹 Clear
             </button>
-            <button
-              id="btnResetPanZoom"
-              class="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded text-slate-300 font-semibold"
+            <label
+              class="bg-sky-600 text-white text-[10px] font-bold px-2 py-1 rounded cursor-pointer"
             >
-              🔍 Reset
-            </button>
-            <button
-              id="btnFullscreen2D"
-              class="text-[10px] bg-sky-600 hover:bg-sky-500 font-bold px-2 py-1 rounded text-white shadow transition"
-            >
-              ⛶ Fullscreen
-            </button>
+              + Upload
+              <input type="file" onchange="handleDirectUpload(this)" accept="image/*" class="hidden" />
+            </label>
           </div>
         </div>
 
@@ -626,7 +519,7 @@
               <span class="font-semibold text-sky-400">Visualisasi 3D</span>
               <button
                 id="btnFullscreen3D"
-                class="text-[10px] bg-sky-600 hover:bg-sky-500 font-bold px-2 py-0.5 rounded text-white"
+                class="text-[10px] bg-sky-600 font-bold px-2 py-0.5 rounded text-white"
               >
                 ⛶ Fullscreen 3D
               </button>
@@ -760,6 +653,29 @@
     </div>
 
     <script>
+      let currentMode = "draw"; // 'draw', 'layer', 'pan'
+
+      function setInteractionMode(mode) {
+        currentMode = mode;
+        document.getElementById("modeDraw").className = `text-[10px] font-bold px-2 py-1 rounded ${mode === 'draw' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'}`;
+        document.getElementById("modeLayer").className = `text-[10px] font-bold px-2 py-1 rounded ${mode === 'layer' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'}`;
+        document.getElementById("modePan").className = `text-[10px] font-bold px-2 py-1 rounded ${mode === 'pan' ? 'bg-sky-600 text-white' : 'text-slate-400 hover:text-white'}`;
+
+        const drawTouchBar = document.getElementById("drawTouchBar");
+        const layerTouchBar = document.getElementById("layerTouchBar");
+
+        if (mode === "draw") {
+          drawTouchBar.classList.remove("hidden");
+          layerTouchBar.classList.add("hidden");
+        } else if (mode === "layer") {
+          drawTouchBar.classList.add("hidden");
+          if (activeLayerIndex >= 0) layerTouchBar.classList.remove("hidden");
+        } else {
+          drawTouchBar.classList.add("hidden");
+          layerTouchBar.classList.add("hidden");
+        }
+      }
+
       // TOGGLE SIDEBAR MOBILE
       const btnToggle = document.getElementById("btnToggleSidebar");
       const sidebar = document.getElementById("sidebar");
@@ -767,7 +683,6 @@
         sidebar.classList.toggle("hidden");
       });
 
-      // FULLSCREEN TOGGLE SYSTEM
       function toggleElementFullscreen(elem) {
         if (!document.fullscreenElement) {
           if (elem.requestFullscreen) elem.requestFullscreen();
@@ -785,7 +700,7 @@
         toggleElementFullscreen(document.getElementById("canvasContainer"));
       });
 
-      // SYNC PENYETELAN KUAS & WARNA (UNTUK FULL SCREEN TOOLBAR)
+      // SYNC PENYETELAN KUAS
       const drawColorInput = document.getElementById("drawColor");
       const colorIndicator = document.getElementById("colorIndicatorFS");
       const brushSizeInput = document.getElementById("brushSize");
@@ -1030,28 +945,34 @@
         e.preventDefault(),
       );
 
-      // PANNING & PINCH TO ZOOM UNTUK TOUCHSCREEN HP (2 JARI)
-      let touchStartX = 0,
-        touchStartY = 0;
+      // TOUCH GESTURE HANDLING UNTUK 3 MODE
+      let touchStartX = 0, touchStartY = 0;
       let initialPinchDist = 0;
       let initialScale = 0.5;
+      let isDraggingLayer = false;
+      let layerStartX = 0, layerStartY = 0;
 
       parentContainer.addEventListener(
         "touchstart",
         (e) => {
-          if (e.touches.length === 2) {
+          if (currentMode === "pan" || e.touches.length === 2) {
             isPanning = true;
-            touchStartX =
-              (e.touches[0].clientX + e.touches[1].clientX) / 2 - panX;
-            touchStartY =
-              (e.touches[0].clientY + e.touches[1].clientY) / 2 - panY;
+            touchStartX = (e.touches[0].clientX + (e.touches[1] ? e.touches[1].clientX : e.touches[0].clientX)) / (e.touches[1] ? 2 : 1) - panX;
+            touchStartY = (e.touches[0].clientY + (e.touches[1] ? e.touches[1].clientY : e.touches[0].clientY)) / (e.touches[1] ? 2 : 1) - panY;
 
-            // Hitung jarak pinch zoom 2 jari
-            initialPinchDist = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY,
-            );
-            initialScale = scale;
+            if (e.touches.length === 2) {
+              initialPinchDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY,
+              );
+              initialScale = scale;
+            }
+          } else if (currentMode === "layer" && activeLayerIndex >= 0 && e.touches.length === 1) {
+            isDraggingLayer = true;
+            const pos = getCanvasPos(e);
+            const layer = imageLayers[activeLayerIndex];
+            layerStartX = pos.x - (canvas2d.width / 2 + layer.posX);
+            layerStartY = pos.y - (canvas2d.height / 2 + layer.posY);
           }
         },
         { passive: false },
@@ -1060,58 +981,38 @@
       parentContainer.addEventListener(
         "touchmove",
         (e) => {
-          if (isPanning && e.touches.length === 2) {
+          if (isPanning && (currentMode === "pan" || e.touches.length === 2)) {
             e.preventDefault();
-            panX =
-              (e.touches[0].clientX + e.touches[1].clientX) / 2 - touchStartX;
-            panY =
-              (e.touches[0].clientY + e.touches[1].clientY) / 2 - touchStartY;
+            panX = (e.touches[0].clientX + (e.touches[1] ? e.touches[1].clientX : e.touches[0].clientX)) / (e.touches[1] ? 2 : 1) - touchStartX;
+            panY = (e.touches[0].clientY + (e.touches[1] ? e.touches[1].clientY : e.touches[0].clientY)) / (e.touches[1] ? 2 : 1) - touchStartY;
 
-            // Logika Pinch Zoom
-            const currentDist = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY,
-            );
-            if (initialPinchDist > 0) {
+            if (e.touches.length === 2 && initialPinchDist > 0) {
+              const currentDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY,
+              );
               const zoomFactor = currentDist / initialPinchDist;
               scale = Math.min(Math.max(initialScale * zoomFactor, 0.2), 3.0);
             }
-
             applyTransform();
+          } else if (isDraggingLayer && currentMode === "layer" && activeLayerIndex >= 0) {
+            e.preventDefault();
+            const pos = getCanvasPos(e);
+            const layer = imageLayers[activeLayerIndex];
+            layer.posX = Math.round(pos.x - canvas2d.width / 2 - layerStartX);
+            layer.posY = Math.round(pos.y - canvas2d.height / 2 - layerStartY);
+            renderComposite();
           }
         },
         { passive: false },
       );
 
       parentContainer.addEventListener("touchend", () => {
+        if (isDraggingLayer) saveHistory();
         isPanning = false;
+        isDraggingLayer = false;
         initialPinchDist = 0;
       });
-
-      parentContainer.addEventListener("mousedown", (e) => {
-        if (e.button === 2 || e.button === 1) {
-          isPanning = true;
-          startPanX = e.clientX - panX;
-          startPanY = e.clientY - panY;
-        }
-      });
-      window.addEventListener("mousemove", (e) => {
-        if (isPanning && e.buttons !== 0) {
-          panX = e.clientX - startPanX;
-          panY = e.clientY - startPanY;
-          applyTransform();
-        }
-      });
-      window.addEventListener("mouseup", () => (isPanning = false));
-
-      document
-        .getElementById("btnResetPanZoom")
-        .addEventListener("click", () => {
-          scale = 0.5;
-          panX = 0;
-          panY = 0;
-          applyTransform();
-        });
 
       let renderPanelsScheduled = false;
 
@@ -1149,15 +1050,15 @@
             ctx.rotate((layer.rot * Math.PI) / 180);
             ctx.drawImage(layer.img, -drawW / 2, -drawH / 2, drawW, drawH);
 
-            if (idx === activeLayerIndex) {
+            if (idx === activeLayerIndex && currentMode === "layer") {
               ctx.strokeStyle = "#0284c7";
-              ctx.lineWidth = 2;
+              ctx.lineWidth = 3;
               ctx.setLineDash([6, 6]);
               ctx.strokeRect(
-                -drawW / 2 - 4,
-                -drawH / 2 - 4,
-                drawW + 8,
-                drawH + 8,
+                -drawW / 2 - 6,
+                -drawH / 2 - 6,
+                drawW + 12,
+                drawH + 12,
               );
               ctx.setLineDash([]);
             }
@@ -1345,6 +1246,7 @@
 
       ["mousedown", "touchstart"].forEach((evt) => {
         canvas2d.addEventListener(evt, (e) => {
+          if (currentMode !== "draw") return;
           if (e.type === "mousedown" && e.button !== 0) return;
           if (e.touches && e.touches.length > 1) return;
           isDrawing = true;
@@ -1356,7 +1258,7 @@
 
       ["mousemove", "touchmove"].forEach((evt) => {
         canvas2d.addEventListener(evt, (e) => {
-          if (!isDrawing) return;
+          if (currentMode !== "draw" || !isDrawing) return;
           if (e.touches && e.touches.length > 1) return;
           const pos = getCanvasPos(e);
           drawCtx.strokeStyle = document.getElementById("drawColor").value;
@@ -1494,15 +1396,8 @@
         renderComposite();
       }
 
-      document
-        .getElementById("btnAutofitFit")
-        .addEventListener("click", () => autofitActiveLayer("fit"));
-      document
-        .getElementById("btnAutofitCover")
-        .addEventListener("click", () => autofitActiveLayer("cover"));
-
-      document.getElementById("uploadImage").addEventListener("change", (e) => {
-        const file = e.target.files[0];
+      function handleDirectUpload(input) {
+        const file = input.files[0];
         if (!file) return;
 
         const reader = new FileReader();
@@ -1521,10 +1416,7 @@
 
             const newLayer = {
               id: Date.now(),
-              name:
-                file.name.length > 15
-                  ? file.name.substring(0, 12) + "..."
-                  : file.name,
+              name: file.name.length > 15 ? file.name.substring(0, 12) + "..." : file.name,
               img: img,
               customW: initW,
               customH: initH,
@@ -1540,6 +1432,7 @@
 
             imageLayers.push(newLayer);
             activeLayerIndex = imageLayers.length - 1;
+            setInteractionMode("layer");
             updateLayerListUI();
             updateControlsUI();
             saveHistory();
@@ -1548,8 +1441,34 @@
           img.src = event.target.result;
         };
         reader.readAsDataURL(file);
-        e.target.value = "";
-      });
+        input.value = "";
+      }
+
+      function toggleRepeatTouch(checked) {
+        if (activeLayerIndex >= 0) {
+          imageLayers[activeLayerIndex].autoRepeat = checked;
+          renderComposite();
+        }
+      }
+
+      function setRotTouch(val) {
+        if (activeLayerIndex >= 0) {
+          imageLayers[activeLayerIndex].rot = parseInt(val);
+          renderComposite();
+        }
+      }
+
+      function deleteActiveLayer() {
+        if (activeLayerIndex >= 0) {
+          imageLayers.splice(activeLayerIndex, 1);
+          activeLayerIndex = imageLayers.length - 1;
+          if (activeLayerIndex < 0) setInteractionMode("draw");
+          updateLayerListUI();
+          updateControlsUI();
+          saveHistory();
+          renderComposite();
+        }
+      }
 
       function updateLayerListUI() {
         const container = document.getElementById("layerListContainer");
@@ -1577,6 +1496,7 @@
           `;
           item.onclick = () => {
             activeLayerIndex = idx;
+            setInteractionMode("layer");
             updateLayerListUI();
             updateControlsUI();
             renderComposite();
@@ -1586,141 +1506,16 @@
       }
 
       function updateControlsUI() {
-        const controls = document.getElementById("imgControls");
-        if (activeLayerIndex < 0 || activeLayerIndex >= imageLayers.length) {
-          controls.classList.add("opacity-50", "pointer-events-none");
-          return;
+        if (activeLayerIndex >= 0 && imageLayers[activeLayerIndex]) {
+          const layer = imageLayers[activeLayerIndex];
+          document.getElementById("lblActiveLayerName").innerText = `📷 ${layer.name}`;
+          document.getElementById("chkAutoRepeatTouch").checked = layer.autoRepeat;
+          document.getElementById("rotTouch").value = layer.rot;
+          if (currentMode === "layer") document.getElementById("layerTouchBar").classList.remove("hidden");
+        } else {
+          document.getElementById("layerTouchBar").classList.add("hidden");
         }
-
-        controls.classList.remove("opacity-50", "pointer-events-none");
-        const layer = imageLayers[activeLayerIndex];
-
-        document.getElementById("imgWidthPx").value = Math.round(layer.customW);
-        document.getElementById("imgHeightPx").value = Math.round(
-          layer.customH,
-        );
-        document.getElementById("chkLockAspect").checked = layer.lockAspect;
-        document.getElementById("imgScale").value = layer.scale;
-        document.getElementById("lblImgScale").innerText = layer.scale;
-        document.getElementById("imgRot").value = layer.rot;
-        document.getElementById("lblImgRot").innerText = layer.rot;
-        document.getElementById("imgPosX").value = layer.posX;
-        document.getElementById("imgPosY").value = layer.posY;
-        document.getElementById("chkAutoRepeat").checked = layer.autoRepeat;
-        document.getElementById("repeatX").value = layer.repeatX;
-        document.getElementById("lblRepeatX").innerText = layer.repeatX;
-        document.getElementById("repeatY").value = layer.repeatY;
-        document.getElementById("lblRepeatY").innerText = layer.repeatY;
-
-        const tilingDiv = document.getElementById("tilingControls");
-        if (layer.autoRepeat) tilingDiv.classList.remove("hidden");
-        else tilingDiv.classList.add("hidden");
       }
-
-      document.getElementById("imgWidthPx").addEventListener("input", (e) => {
-        if (activeLayerIndex >= 0) {
-          const layer = imageLayers[activeLayerIndex];
-          const newW = Math.max(10, parseInt(e.target.value) || 10);
-          if (layer.lockAspect && layer.customW > 0) {
-            const aspect = layer.customH / layer.customW;
-            layer.customH = Math.round(newW * aspect);
-            document.getElementById("imgHeightPx").value = layer.customH;
-          }
-          layer.customW = newW;
-          renderComposite();
-        }
-      });
-
-      document.getElementById("imgHeightPx").addEventListener("input", (e) => {
-        if (activeLayerIndex >= 0) {
-          const layer = imageLayers[activeLayerIndex];
-          const newH = Math.max(10, parseInt(e.target.value) || 10);
-          if (layer.lockAspect && layer.customH > 0) {
-            const aspect = layer.customW / layer.customH;
-            layer.customW = Math.round(newH * aspect);
-            document.getElementById("imgWidthPx").value = layer.customW;
-          }
-          layer.customH = newH;
-          renderComposite();
-        }
-      });
-
-      document
-        .getElementById("chkLockAspect")
-        .addEventListener("change", (e) => {
-          if (activeLayerIndex >= 0)
-            imageLayers[activeLayerIndex].lockAspect = e.target.checked;
-        });
-
-      document
-        .getElementById("chkAutoRepeat")
-        .addEventListener("change", (e) => {
-          if (activeLayerIndex >= 0) {
-            imageLayers[activeLayerIndex].autoRepeat = e.target.checked;
-            updateLayerListUI();
-            updateControlsUI();
-            renderComposite();
-          }
-        });
-
-      document.getElementById("repeatX").addEventListener("input", (e) => {
-        if (activeLayerIndex >= 0) {
-          imageLayers[activeLayerIndex].repeatX = parseInt(e.target.value);
-          document.getElementById("lblRepeatX").innerText = e.target.value;
-          renderComposite();
-        }
-      });
-
-      document.getElementById("repeatY").addEventListener("input", (e) => {
-        if (activeLayerIndex >= 0) {
-          imageLayers[activeLayerIndex].repeatY = parseInt(e.target.value);
-          document.getElementById("lblRepeatY").innerText = e.target.value;
-          renderComposite();
-        }
-      });
-
-      document.getElementById("imgRot").addEventListener("input", (e) => {
-        if (activeLayerIndex >= 0) {
-          imageLayers[activeLayerIndex].rot = parseInt(e.target.value);
-          document.getElementById("lblImgRot").innerText = e.target.value;
-          renderComposite();
-        }
-      });
-
-      document.getElementById("imgScale").addEventListener("input", (e) => {
-        if (activeLayerIndex >= 0) {
-          imageLayers[activeLayerIndex].scale = parseInt(e.target.value);
-          document.getElementById("lblImgScale").innerText = e.target.value;
-          renderComposite();
-        }
-      });
-
-      document.getElementById("imgPosX").addEventListener("input", (e) => {
-        if (activeLayerIndex >= 0) {
-          imageLayers[activeLayerIndex].posX = parseInt(e.target.value);
-          renderComposite();
-        }
-      });
-
-      document.getElementById("imgPosY").addEventListener("input", (e) => {
-        if (activeLayerIndex >= 0) {
-          imageLayers[activeLayerIndex].posY = parseInt(e.target.value);
-          renderComposite();
-        }
-      });
-
-      document
-        .getElementById("btnDeleteLayer")
-        .addEventListener("click", () => {
-          if (activeLayerIndex >= 0) {
-            imageLayers.splice(activeLayerIndex, 1);
-            activeLayerIndex = imageLayers.length - 1;
-            updateLayerListUI();
-            updateControlsUI();
-            saveHistory();
-            renderComposite();
-          }
-        });
 
       function setupResizable() {
         if (window.innerWidth < 768) return;
@@ -1986,6 +1781,7 @@
       applyTransform();
       renderGridEditorTable();
       drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+      setInteractionMode("draw");
       saveHistory();
       animate();
     </script>
