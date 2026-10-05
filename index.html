@@ -2,7 +2,7 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Balon Studio 3D</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -11,88 +11,99 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
-      .resizer-h {
-        width: 10px;
-        background: #1e293b;
-        border-left: 1px solid #334155;
-        border-right: 1px solid #334155;
-        cursor: col-resize;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 40;
-        transition: background 0.2s;
-      }
-      .resizer-h::after {
-        content: "║";
-        color: #0284c7;
-        font-size: 12px;
-        font-weight: bold;
-      }
-      .resizer-h:hover,
-      .resizer-h.active {
-        background: #0284c7;
-      }
-      .resizer-h:hover::after,
-      .resizer-h.active::after {
-        color: #ffffff;
+      /* Resizer hanya muncul di desktop (md ke atas) */
+      @media (min-width: 768px) {
+        .resizer-h {
+          width: 10px;
+          background: #1e293b;
+          border-left: 1px solid #334155;
+          border-right: 1px solid #334155;
+          cursor: col-resize;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 40;
+          transition: background 0.2s;
+        }
+        .resizer-h::after {
+          content: "║";
+          color: #0284c7;
+          font-size: 12px;
+          font-weight: bold;
+        }
+        .resizer-h:hover,
+        .resizer-h.active {
+          background: #0284c7;
+        }
+
+        .resizer-v {
+          height: 10px;
+          background: #1e293b;
+          border-top: 1px solid #334155;
+          border-bottom: 1px solid #334155;
+          cursor: row-resize;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 40;
+          transition: background 0.2s;
+        }
+        .resizer-v::after {
+          content: "═";
+          color: #0284c7;
+          font-size: 12px;
+          font-weight: bold;
+        }
+        .resizer-v:hover,
+        .resizer-v.active {
+          background: #0284c7;
+        }
       }
 
-      .resizer-v {
-        height: 10px;
-        background: #1e293b;
-        border-top: 1px solid #334155;
-        border-bottom: 1px solid #334155;
-        cursor: row-resize;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 40;
-        transition: background 0.2s;
-      }
-      .resizer-v::after {
-        content: "═";
-        color: #0284c7;
-        font-size: 12px;
-        font-weight: bold;
-      }
-      .resizer-v:hover,
-      .resizer-v.active {
-        background: #0284c7;
-      }
-      .resizer-v:hover::after,
-      .resizer-v.active::after {
-        color: #ffffff;
+      @media (max-width: 767px) {
+        .resizer-h, .resizer-v {
+          display: none !important;
+        }
       }
     </style>
   </head>
-  <body
-    class="bg-slate-900 text-white font-sans flex h-screen overflow-hidden select-none"
-  >
-    <!-- SIDEBAR KONTROL -->
+  <body class="bg-slate-900 text-white font-sans h-screen flex flex-col md:flex-row overflow-hidden select-none">
+
+    <!-- NAVBAR UNTUK MOBILE (HANYA MUNCUL DI HP) -->
+    <div class="md:hidden bg-slate-800 p-3 border-b border-slate-700 flex justify-between items-center z-50">
+      <div>
+        <h1 class="text-sm font-bold text-sky-400">Balon Studio 3D</h1>
+        <p class="text-[9px] text-slate-400">Perancang Balon Kertas</p>
+      </div>
+      <button id="btnToggleSidebar" class="bg-sky-600 text-white text-xs px-3 py-1.5 rounded font-bold">
+        ⚙️ Panel Kontrol
+      </button>
+    </div>
+
+    <!-- SIDEBAR KONTROL (RESPONSIVE DROPDOWN/DRAWER DI MOBILE) -->
     <div
       id="sidebar"
-      class="w-80 bg-slate-800 p-4 border-r border-slate-700 flex flex-col justify-between overflow-y-auto flex-shrink-0"
+      class="fixed inset-x-0 top-[53px] bottom-0 z-40 bg-slate-800 p-4 border-r border-slate-700 flex flex-col justify-between overflow-y-auto w-full md:static md:w-80 md:inset-auto hidden md:flex flex-shrink-0"
     >
       <div>
-        <h1 class="text-lg font-bold text-sky-400 mb-1">Balon Studio 3D</h1>
-        <p class="text-[11px] text-slate-400 mb-3">Sistem Perancang Balon</p>
+        <div class="hidden md:block">
+          <h1 class="text-lg font-bold text-sky-400 mb-1">Balon Studio 3D</h1>
+          <p class="text-[11px] text-slate-400 mb-3">Sistem Perancang Balon</p>
+        </div>
 
         <!-- NAVIGATION TAB -->
-        <div
-          class="flex gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 mb-4"
-        >
+        <div class="flex gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 mb-4">
           <button
             id="tabGrid"
             onclick="switchTab('grid')"
-            class="flex-1 text-slate-400 hover:text-white text-xs font-bold py-1.5 rounded transition"
+            class="flex-1 text-slate-400 hover:text-white text-xs font-bold py-2 rounded transition"
           >
             Ukuran Grid
           </button>
           <button
             id="tabMotif"
             onclick="switchTab('motif')"
-            class="flex-1 bg-sky-600 text-white text-xs font-bold py-1.5 rounded transition"
+            class="flex-1 bg-sky-600 text-white text-xs font-bold py-2 rounded transition"
           >
             Editor Motif
           </button>
@@ -100,16 +111,13 @@
 
         <!-- TAB 1: PENGATURAN GRID & UKURAN KERTAS -->
         <div id="sectionGrid" class="hidden space-y-3">
-          <!-- REKOMENDASI PRESET UKURAN TRADISIONAL -->
-          <div
-            class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-700 space-y-1.5"
-          >
+          <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-700 space-y-1.5">
             <label class="text-[10px] font-bold text-sky-300 block uppercase">
               🎈 Rekomendasi Preset Ukuran
             </label>
             <select
               id="selectPreset"
-              class="w-full bg-slate-700 border border-slate-600 rounded p-1.5 text-xs text-white focus:outline-none focus:border-sky-500 cursor-pointer"
+              class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-xs text-white focus:outline-none focus:border-sky-500 cursor-pointer"
             >
               <option value="ideal">🌟16 Panel • 8 Grid</option>
               <option value="ponorogo">🎈16 Panel • 9 Grid</option>
@@ -121,55 +129,45 @@
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="text-[10px] text-slate-400 block mb-1"
-                >Jumlah Panel Balon</label
-              >
+              <label class="text-[10px] text-slate-400 block mb-1">Jumlah Panel Balon</label>
               <input
                 type="number"
                 id="inputPanel"
                 value="16"
                 min="6"
                 max="32"
-                class="w-full bg-slate-700 border border-slate-600 rounded p-1 text-xs text-white"
+                class="w-full bg-slate-700 border border-slate-600 rounded p-1.5 text-xs text-white"
               />
             </div>
             <div>
-              <label class="text-[10px] text-slate-400 block mb-1"
-                >Jumlah Tinggi (Grid)</label
-              >
+              <label class="text-[10px] text-slate-400 block mb-1">Jumlah Tinggi (Grid)</label>
               <input
                 type="number"
                 id="inputGridCount"
                 value="8"
                 min="2"
                 max="15"
-                class="w-full bg-slate-700 border border-slate-600 rounded p-1 text-xs text-white"
+                class="w-full bg-slate-700 border border-slate-600 rounded p-1.5 text-xs text-white"
               />
             </div>
           </div>
 
           <button
             id="btnResetDefault"
-            class="w-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold py-1.5 rounded transition"
+            class="w-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold py-2 rounded transition"
           >
             Reset Ke Bentuk Balon Ideal
           </button>
 
           <hr class="border-slate-700" />
           <div class="flex justify-between items-center">
-            <h2 class="text-xs font-bold text-sky-300 uppercase">
-              Tabel Kertas/Grid (cm)
-            </h2>
-            <span class="text-[9px] text-slate-400">Dimensi Max: 95x70 cm</span>
+            <h2 class="text-xs font-bold text-sky-300 uppercase">Tabel Kertas/Grid (cm)</h2>
+            <span class="text-[9px] text-slate-400">Max: 95x70 cm</span>
           </div>
 
-          <div
-            class="max-h-[calc(100vh-440px)] overflow-y-auto border border-slate-700 rounded bg-slate-900/50"
-          >
+          <div class="max-h-48 md:max-h-[calc(100vh-440px)] overflow-y-auto border border-slate-700 rounded bg-slate-900/50">
             <table class="w-full text-xs text-left text-slate-300">
-              <thead
-                class="bg-slate-800 text-slate-400 sticky top-0 border-b border-slate-700"
-              >
+              <thead class="bg-slate-800 text-slate-400 sticky top-0 border-b border-slate-700">
                 <tr>
                   <th class="p-1.5 w-8">Grid</th>
                   <th class="p-1.5">Tinggi</th>
@@ -181,40 +179,26 @@
             </table>
           </div>
 
-          <!-- PANEL ESTIMASI DIMENSI FISIK OTOMATIS -->
-          <div
-            class="bg-sky-950/40 p-2.5 rounded-lg border border-sky-600/40 space-y-1"
-          >
-            <h3
-              class="text-[10px] font-bold text-sky-300 uppercase flex items-center gap-1"
-            >
+          <!-- PANEL ESTIMASI DIMENSI -->
+          <div class="bg-sky-950/40 p-2.5 rounded-lg border border-sky-600/40 space-y-1">
+            <h3 class="text-[10px] font-bold text-sky-300 uppercase flex items-center gap-1">
               📏 Estimasi Dimensi & Bahan Balon
             </h3>
             <div class="text-[11px] text-slate-300 space-y-0.5 pt-1">
               <div class="flex justify-between">
                 <span class="text-slate-400">Tinggi Total (H):</span>
-                <span id="lblTotalHeight" class="font-bold text-sky-400"
-                  >0 cm (0 m)</span
-                >
+                <span id="lblTotalHeight" class="font-bold text-sky-400">0 cm (0 m)</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-400">Diameter Max (D):</span>
-                <span id="lblMaxDiameter" class="font-bold text-emerald-400"
-                  >0 cm (0 m)</span
-                >
+                <span id="lblMaxDiameter" class="font-bold text-emerald-400">0 cm (0 m)</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-400">Keliling Dada Max:</span>
-                <span
-                  id="lblMaxCircumference"
-                  class="font-medium text-slate-200"
-                  >0 cm</span
-                >
+                <span id="lblMaxCircumference" class="font-medium text-slate-200">0 cm</span>
               </div>
-              <div
-                class="flex justify-between border-t border-sky-800/40 pt-1 mt-1 font-semibold text-amber-300"
-              >
-                <span>Total Panel:</span>
+              <div class="flex justify-between border-t border-sky-800/40 pt-1 mt-1 font-semibold text-amber-300">
+                <span>Total Kertas Fisik:</span>
                 <span id="lblTotalPaperSheets">0 Lembar</span>
               </div>
             </div>
@@ -224,282 +208,94 @@
         <!-- TAB 2: TOOLS DRAWING & MULTI-LAYER IMAGE PROCESSOR -->
         <div id="sectionMotif" class="space-y-3">
           <div class="flex gap-2">
-            <button
-              id="btnUndo"
-              class="flex-1 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-1.5 rounded border border-slate-600"
-            >
-              ↩️ Undo
-            </button>
-            <button
-              id="btnRedo"
-              class="flex-1 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-1.5 rounded border border-slate-600"
-            >
-              ↪️ Redo
-            </button>
+            <button id="btnUndo" class="flex-1 bg-slate-700 text-white text-xs font-bold py-2 rounded border border-slate-600">↩️ Undo</button>
+            <button id="btnRedo" class="flex-1 bg-slate-700 text-white text-xs font-bold py-2 rounded border border-slate-600">↪️ Redo</button>
           </div>
 
           <!-- KUAS GAMBAR -->
-          <div
-            class="bg-slate-900/60 p-3 rounded-lg border border-slate-700 space-y-2"
-          >
-            <h2 class="text-xs font-bold text-sky-300 uppercase">
-              Kuas Coretan Manual
-            </h2>
+          <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-700 space-y-2">
+            <h2 class="text-xs font-bold text-sky-300 uppercase">Kuas Coretan Manual</h2>
             <div class="flex items-center gap-2">
-              <input
-                type="color"
-                id="drawColor"
-                value="#ef4444"
-                class="w-10 h-8 rounded border-0 cursor-pointer bg-transparent"
-              />
+              <input type="color" id="drawColor" value="#ef4444" class="w-10 h-8 rounded border-0 cursor-pointer bg-transparent" />
               <div class="flex-1">
-                <label class="text-[9px] text-slate-400 block"
-                  >Ukuran: <span id="lblBrushSize">12</span>px</label
-                >
-                <input
-                  type="range"
-                  id="brushSize"
-                  min="2"
-                  max="60"
-                  value="12"
-                  class="w-full accent-sky-500"
-                />
+                <label class="text-[9px] text-slate-400 block">Ukuran: <span id="lblBrushSize">12</span>px</label>
+                <input type="range" id="brushSize" min="2" max="60" value="12" class="w-full accent-sky-500" />
               </div>
             </div>
-            <button
-              id="btnClearCanvas"
-              class="w-full bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold py-1 rounded transition"
-            >
-              Clear Coretan
-            </button>
+            <button id="btnClearCanvas" class="w-full bg-rose-600 text-white text-xs font-bold py-1.5 rounded">Clear Coretan</button>
           </div>
 
-          <!-- UPLOAD GAMBAR MULTI-LAYER & AUTO-REPEAT -->
-          <div
-            class="bg-slate-900/60 p-3 rounded-lg border border-slate-700 space-y-2"
-          >
-            <h2 class="text-xs font-bold text-sky-300 uppercase">
-              Layer Gambar & Motif
-            </h2>
-            <label
-              class="block w-full text-center bg-sky-600 hover:bg-sky-500 text-white text-xs py-1.5 rounded cursor-pointer font-semibold transition mb-1"
-            >
+          <!-- UPLOAD GAMBAR MULTI-LAYER -->
+          <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-700 space-y-2">
+            <h2 class="text-xs font-bold text-sky-300 uppercase">Layer Gambar & Motif</h2>
+            <label class="block w-full text-center bg-sky-600 text-white text-xs py-2 rounded cursor-pointer font-semibold transition">
               + Tambah Layer Gambar / Motif
-              <input
-                type="file"
-                id="uploadImage"
-                accept="image/*"
-                class="hidden"
-              />
+              <input type="file" id="uploadImage" accept="image/*" class="hidden" />
             </label>
 
-            <!-- DAFTAR LAYER GAMBAR -->
-            <div
-              id="layerListContainer"
-              class="space-y-1 max-h-24 overflow-y-auto border border-slate-800 rounded p-1 bg-slate-950"
-            >
-              <p
-                id="lblNoLayer"
-                class="text-[10px] text-slate-500 text-center py-2"
-              >
-                Belum ada gambar yang di-upload
-              </p>
+            <div id="layerListContainer" class="space-y-1 max-h-24 overflow-y-auto border border-slate-800 rounded p-1 bg-slate-950">
+              <p id="lblNoLayer" class="text-[10px] text-slate-500 text-center py-2">Belum ada gambar yang di-upload</p>
             </div>
 
             <!-- CONTROLLER LAYER TERPILIH -->
-            <div
-              id="imgControls"
-              class="space-y-2 pt-2 border-t border-slate-800 opacity-50 pointer-events-none"
-            >
+            <div id="imgControls" class="space-y-2 pt-2 border-t border-slate-800 opacity-50 pointer-events-none">
               <div class="grid grid-cols-2 gap-1.5">
-                <button
-                  id="btnAutofitFit"
-                  class="bg-slate-700 hover:bg-sky-600 text-white text-[10px] font-bold py-1 rounded transition border border-slate-600 flex items-center justify-center gap-1"
-                >
-                  📐 Autofit (Fit)
-                </button>
-                <button
-                  id="btnAutofitCover"
-                  class="bg-slate-700 hover:bg-sky-600 text-white text-[10px] font-bold py-1 rounded transition border border-slate-600 flex items-center justify-center gap-1"
-                >
-                  🖼 Autofit (Cover)
-                </button>
+                <button id="btnAutofitFit" class="bg-slate-700 text-white text-[10px] font-bold py-1 rounded border border-slate-600">📐 Autofit (Fit)</button>
+                <button id="btnAutofitCover" class="bg-slate-700 text-white text-[10px] font-bold py-1 rounded border border-slate-600">🖼 Autofit (Cover)</button>
               </div>
 
-              <div
-                class="bg-slate-800 p-2 rounded border border-slate-700 space-y-1.5"
-              >
+              <div class="bg-slate-800 p-2 rounded border border-slate-700 space-y-1.5">
                 <div class="flex items-center justify-between">
-                  <span class="text-[10px] font-bold text-sky-300"
-                    >📐 Dimensi Ukuran Gambar (px)</span
-                  >
-                  <label
-                    class="flex items-center gap-1 text-[9px] text-slate-300 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      id="chkLockAspect"
-                      checked
-                      class="rounded bg-slate-700 accent-sky-500"
-                    />
-                    Kunci Rasio
+                  <span class="text-[10px] font-bold text-sky-300">📐 Ukuran Gambar (px)</span>
+                  <label class="flex items-center gap-1 text-[9px] text-slate-300 cursor-pointer">
+                    <input type="checkbox" id="chkLockAspect" checked class="rounded bg-slate-700 accent-sky-500" /> Kunci Rasio
                   </label>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label class="text-[9px] text-slate-400 block"
-                      >Lebar (px)</label
-                    >
-                    <input
-                      type="number"
-                      id="imgWidthPx"
-                      min="10"
-                      max="2048"
-                      class="w-full bg-slate-700 border border-slate-600 rounded p-1 text-xs text-white"
-                    />
-                  </div>
-                  <div>
-                    <label class="text-[9px] text-slate-400 block"
-                      >Tinggi (px)</label
-                    >
-                    <input
-                      type="number"
-                      id="imgHeightPx"
-                      min="10"
-                      max="2048"
-                      class="w-full bg-slate-700 border border-slate-600 rounded p-1 text-xs text-white"
-                    />
-                  </div>
+                  <input type="number" id="imgWidthPx" min="10" max="2048" placeholder="W" class="w-full bg-slate-700 border border-slate-600 rounded p-1 text-xs text-white" />
+                  <input type="number" id="imgHeightPx" min="10" max="2048" placeholder="H" class="w-full bg-slate-700 border border-slate-600 rounded p-1 text-xs text-white" />
                 </div>
               </div>
 
               <div class="bg-slate-800 p-2 rounded border border-slate-700">
-                <label
-                  class="flex items-center justify-between text-[10px] font-bold text-sky-300 cursor-pointer"
-                >
-                  <span>🔁 Auto-Repeat / Motif Tiling</span>
-                  <input
-                    type="checkbox"
-                    id="chkAutoRepeat"
-                    class="rounded bg-slate-700 accent-sky-500"
-                  />
+                <label class="flex items-center justify-between text-[10px] font-bold text-sky-300 cursor-pointer">
+                  <span>🔁 Auto-Repeat / Tiling</span>
+                  <input type="checkbox" id="chkAutoRepeat" class="rounded bg-slate-700 accent-sky-500" />
                 </label>
                 <div id="tilingControls" class="hidden pt-1.5 space-y-1">
                   <div>
-                    <label class="text-[9px] text-slate-400 block"
-                      >Jumlah Ulang Horizontal:
-                      <span id="lblRepeatX">4</span>x</label
-                    >
-                    <input
-                      type="range"
-                      id="repeatX"
-                      min="1"
-                      max="32"
-                      value="4"
-                      class="w-full accent-sky-500"
-                    />
+                    <label class="text-[9px] text-slate-400 block">Ulang Horiz: <span id="lblRepeatX">4</span>x</label>
+                    <input type="range" id="repeatX" min="1" max="32" value="4" class="w-full accent-sky-500" />
                   </div>
                   <div>
-                    <label class="text-[9px] text-slate-400 block"
-                      >Jumlah Ulang Vertikal:
-                      <span id="lblRepeatY">4</span>x</label
-                    >
-                    <input
-                      type="range"
-                      id="repeatY"
-                      min="1"
-                      max="32"
-                      value="4"
-                      class="w-full accent-sky-500"
-                    />
+                    <label class="text-[9px] text-slate-400 block">Ulang Vert: <span id="lblRepeatY">4</span>x</label>
+                    <input type="range" id="repeatY" min="1" max="32" value="4" class="w-full accent-sky-500" />
                   </div>
                 </div>
               </div>
 
               <div>
-                <label class="text-[9px] text-slate-400 block"
-                  >Rotasi Gambar: <span id="lblImgRot">0</span>°</label
-                >
-                <input
-                  type="range"
-                  id="imgRot"
-                  min="0"
-                  max="360"
-                  value="0"
-                  class="w-full accent-sky-500"
-                />
+                <label class="text-[9px] text-slate-400 block">Rotasi: <span id="lblImgRot">0</span>°</label>
+                <input type="range" id="imgRot" min="0" max="360" value="0" class="w-full accent-sky-500" />
               </div>
               <div>
-                <label class="text-[9px] text-slate-400 block"
-                  >Skala Persen: <span id="lblImgScale">100</span>%</label
-                >
-                <input
-                  type="range"
-                  id="imgScale"
-                  min="5"
-                  max="300"
-                  value="100"
-                  class="w-full accent-sky-500"
-                />
+                <label class="text-[9px] text-slate-400 block">Skala: <span id="lblImgScale">100</span>%</label>
+                <input type="range" id="imgScale" min="5" max="300" value="100" class="w-full accent-sky-500" />
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="text-[9px] text-slate-400 block"
-                    >Posisi X</label
-                  >
-                  <input
-                    type="range"
-                    id="imgPosX"
-                    min="-500"
-                    max="500"
-                    value="0"
-                    class="w-full accent-sky-500"
-                  />
-                </div>
-                <div>
-                  <label class="text-[9px] text-slate-400 block"
-                    >Posisi Y</label
-                  >
-                  <input
-                    type="range"
-                    id="imgPosY"
-                    min="-500"
-                    max="500"
-                    value="0"
-                    class="w-full accent-sky-500"
-                  />
-                </div>
+                <input type="range" id="imgPosX" min="-500" max="500" value="0" class="w-full accent-sky-500" />
+                <input type="range" id="imgPosY" min="-500" max="500" value="0" class="w-full accent-sky-500" />
               </div>
 
-              <button
-                id="btnDeleteLayer"
-                class="w-full bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold py-1 rounded transition"
-              >
-                🗑️️ Hapus Layer Terpilih
-              </button>
+              <button id="btnDeleteLayer" class="w-full bg-rose-700 text-white text-xs font-bold py-1.5 rounded">🗑 Hapus Layer</button>
             </div>
           </div>
 
           <!-- EXPORT BUTTONS -->
           <div class="space-y-2 pt-2">
-            <button
-              id="btnExportPDF"
-              class="w-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-2 rounded shadow transition flex items-center justify-center gap-1"
-            >
-              📑 Export Lembar Kerja PDF (Blueprint)
-            </button>
-            <button
-              id="btnExportPNG"
-              class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 rounded shadow transition flex items-center justify-center gap-1"
-            >
-              🖼️ Export Pola Potong Seamless (PNG)
-            </button>
-            <button
-              id="btnExport2DMotif"
-              class="w-full bg-sky-700 hover:bg-sky-600 text-white text-xs font-bold py-1.5 rounded shadow transition flex items-center justify-center gap-1"
-            >
-              🎨 Download Gambar Motif 2D (PNG)
-            </button>
+            <button id="btnExportPDF" class="w-full bg-red-600 text-white text-xs font-bold py-2.5 rounded shadow">📑 Export Blueprint PDF</button>
+            <button id="btnExportPNG" class="w-full bg-emerald-600 text-white text-xs font-bold py-2.5 rounded shadow">🖼️ Export Pola Seamless (PNG)</button>
+            <button id="btnExport2DMotif" class="w-full bg-sky-700 text-white text-xs font-bold py-2 rounded shadow">🎨 Download Motif 2D (PNG)</button>
           </div>
         </div>
       </div>
@@ -509,39 +305,16 @@
     <div id="resizerSidebar" class="resizer-h"></div>
 
     <!-- MAIN WORKSPACE -->
-    <div class="flex-1 flex flex-row overflow-hidden" id="mainWorkspace">
+    <div class="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden" id="mainWorkspace">
       <!-- CANVAS 2D PETA MOTIF -->
-      <div
-        class="w-1/2 flex flex-col bg-slate-950 relative overflow-hidden"
-        id="canvasParent"
-      >
-        <div
-          class="absolute top-3 left-3 z-10 bg-slate-800/80 backdrop-blur px-3 py-1.5 rounded border border-slate-700 text-xs flex items-center gap-3"
-        >
-          <span class="font-bold text-sky-400"
-            >Canvas 2D (1024 x 1024 px)</span
-          >
-          <button
-            id="btnResetPanZoom"
-            class="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded text-slate-300"
-          >
-            Reset View
-          </button>
+      <div class="w-full h-80 md:h-full md:w-1/2 flex flex-col bg-slate-950 relative overflow-hidden flex-shrink-0" id="canvasParent">
+        <div class="absolute top-3 left-3 z-10 bg-slate-800/80 backdrop-blur px-3 py-1.5 rounded border border-slate-700 text-xs flex items-center gap-3">
+          <span class="font-bold text-sky-400">Canvas 2D (1024px)</span>
+          <button id="btnResetPanZoom" class="text-[10px] bg-slate-700 hover:bg-slate-600 px-2 py-0.5 rounded text-slate-300">Reset View</button>
         </div>
-        <div
-          id="viewportViewport"
-          class="w-full h-full flex items-center justify-center cursor-crosshair"
-        >
-          <div
-            id="canvasTransformWrapper"
-            class="origin-center transition-transform duration-75 relative"
-          >
-            <canvas
-              id="textureCanvas"
-              width="1024"
-              height="1024"
-              class="bg-white shadow-2xl border border-slate-700"
-            ></canvas>
+        <div id="viewportViewport" class="w-full h-full flex items-center justify-center cursor-crosshair">
+          <div id="canvasTransformWrapper" class="origin-center transition-transform duration-75 relative">
+            <canvas id="textureCanvas" width="1024" height="1024" class="bg-white shadow-2xl border border-slate-700"></canvas>
           </div>
         </div>
       </div>
@@ -550,25 +323,13 @@
       <div id="resizerCenter" class="resizer-h"></div>
 
       <!-- SPLIT RIGHT -->
-      <div
-        class="flex-1 flex flex-col bg-slate-900 overflow-hidden"
-        id="rightContainer"
-      >
+      <div class="flex-1 flex flex-col bg-slate-900 overflow-hidden w-full h-auto min-h-[600px] md:min-h-0" id="rightContainer">
         <!-- VISUALISASI 3D -->
-        <div class="h-1/2 relative overflow-hidden" id="canvasContainer">
-          <div
-            class="absolute top-3 left-3 bg-slate-800/80 backdrop-blur p-2 rounded border border-slate-700 text-xs z-10"
-          >
+        <div class="h-80 md:h-1/2 relative overflow-hidden flex-shrink-0" id="canvasContainer">
+          <div class="absolute top-3 left-3 bg-slate-800/80 backdrop-blur p-2 rounded border border-slate-700 text-xs z-10">
             <p class="font-semibold text-sky-400 mb-1">Visualisasi Balon 3D</p>
-            <label
-              class="flex items-center gap-2 text-slate-300 cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                id="chkWireframe"
-                class="rounded bg-slate-700"
-              />
-              Wireframe Mode
+            <label class="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <input type="checkbox" id="chkWireframe" class="rounded bg-slate-700" /> Wireframe Mode
             </label>
           </div>
         </div>
@@ -577,26 +338,13 @@
         <div id="resizerRightVertical" class="resizer-v"></div>
 
         <!-- POLA POTONG 2D SEAMLESS -->
-        <div
-          class="flex-1 bg-white relative flex flex-col p-2 overflow-hidden"
-          id="bottomContainer"
-        >
-          <div
-            class="bg-slate-800/90 backdrop-blur px-2.5 py-1 rounded border border-slate-700 text-[11px] z-10 text-white flex justify-between items-center mb-1"
-          >
+        <div class="flex-1 bg-white relative flex flex-col p-2 overflow-hidden min-h-[250px]" id="bottomContainer">
+          <div class="bg-slate-800/90 backdrop-blur px-2.5 py-1 rounded border border-slate-700 text-[11px] z-10 text-white flex justify-between items-center mb-1">
             <span class="font-bold text-sky-400">Pola Potong 2D Seamless</span>
-            <span class="text-slate-400 text-[10px]" id="lblPanelInfo"
-              >16 panel • tinggi 435.0 cm</span
-            >
+            <span class="text-slate-400 text-[10px]" id="lblPanelInfo">16 panel • tinggi 435.0 cm</span>
           </div>
-          <div
-            class="flex-1 overflow-x-auto overflow-y-hidden bg-slate-100 rounded border border-slate-300 p-2 flex items-center"
-          >
-            <canvas
-              id="allPanelsCanvas"
-              height="600"
-              class="h-full object-contain"
-            ></canvas>
+          <div class="flex-1 overflow-x-auto overflow-y-hidden bg-slate-100 rounded border border-slate-300 p-2 flex items-center">
+            <canvas id="allPanelsCanvas" height="600" class="h-full object-contain"></canvas>
           </div>
         </div>
       </div>
@@ -604,60 +352,25 @@
 
     <!-- HIDDEN CONTAINER UNTUK TEMPLATE PDF PRINT -->
     <div class="fixed top-[-9999px] left-[-9999px]">
-      <div
-        id="pdfPrintTemplate"
-        class="w-[794px] bg-white text-slate-900 p-8 font-sans"
-      >
-        <h1
-          class="text-xl font-bold uppercase tracking-wide text-slate-900 border-b border-slate-900 pb-1"
-        >
+      <div id="pdfPrintTemplate" class="w-[794px] bg-white text-slate-900 p-8 font-sans">
+        <h1 class="text-xl font-bold uppercase tracking-wide text-slate-900 border-b border-slate-900 pb-1">
           LEMBAR KERJA PEMBUATAN BALON KERTAS
         </h1>
-        <p class="text-xs text-slate-500 mb-4 mt-1">
-          Tanggal Cetak: <span id="pdfDate"></span> | Status: Blueprint Produksi
-          Siap Potong
-        </p>
+        <p class="text-xs text-slate-500 mb-4 mt-1">Tanggal Cetak: <span id="pdfDate"></span> | Status: Blueprint Produksi Siap Potong</p>
 
-        <h2 class="text-sm font-bold text-sky-700 uppercase mb-2">
-          1. SPESIFIKASI UMUM & DIMENSI BALON
-        </h2>
+        <h2 class="text-sm font-bold text-sky-700 uppercase mb-2">1. SPESIFIKASI UMUM & DIMENSI BALON</h2>
         <ul class="text-xs space-y-1 mb-4 text-slate-800">
-          <li>
-            • Jumlah Panel (Gores) :
-            <span id="pdfValPanel" class="font-semibold">16 Panel</span>
-          </li>
-          <li>
-            • Total Tinggi Balon (H) :
-            <span id="pdfValHeight" class="font-semibold">435 cm (4.35 m)</span>
-          </li>
-          <li>
-            • Diameter Maksimal (D) :
-            <span id="pdfValDiameter" class="font-bold text-emerald-700"
-              >331 cm (3.31 m)</span
-            >
-          </li>
-          <li>
-            • Keliling Maksimal :
-            <span id="pdfValCircumference" class="font-semibold text-slate-700"
-              >1040 cm (10.4 m)</span
-            >
-          </li>
-          <li>
-            • Total Kebutuhan Bahan :
-            <span id="pdfValTotalSheets" class="font-bold text-amber-700"
-              >128 Lembar Kertas</span
-            >
-          </li>
+          <li>• Jumlah Panel (Gores) : <span id="pdfValPanel" class="font-semibold">16 Panel</span></li>
+          <li>• Total Tinggi Balon (H) : <span id="pdfValHeight" class="font-semibold">435 cm (4.35 m)</span></li>
+          <li>• Diameter Maksimal (D) : <span id="pdfValDiameter" class="font-bold text-emerald-700">331 cm (3.31 m)</span></li>
+          <li>• Keliling Maksimal : <span id="pdfValCircumference" class="font-semibold text-slate-700">1040 cm (10.4 m)</span></li>
+          <li>• Total Kebutuhan Bahan : <span id="pdfValTotalSheets" class="font-bold text-amber-700">128 Lembar Kertas</span></li>
         </ul>
 
-        <h2 class="text-sm font-bold text-sky-700 uppercase mb-2">
-          2. TABEL UKURAN POTONGAN KERTAS PER LEMBAR (CM)
-        </h2>
+        <h2 class="text-sm font-bold text-sky-700 uppercase mb-2">2. TABEL UKURAN POTONGAN KERTAS PER LEMBAR (CM)</h2>
         <table class="w-full text-xs text-left border-collapse mb-6">
           <thead>
-            <tr
-              class="bg-sky-50 text-slate-800 font-bold border-y border-slate-300"
-            >
+            <tr class="bg-sky-50 text-slate-800 font-bold border-y border-slate-300">
               <th class="p-2">KERTAS</th>
               <th class="p-2">TINGGI (cm)</th>
               <th class="p-2">LEBAR ATAS (cm)</th>
@@ -668,18 +381,21 @@
           <tbody id="pdfTableBody" class="divide-y divide-slate-200"></tbody>
         </table>
 
-        <h2 class="text-sm font-bold text-sky-700 uppercase mb-2">
-          3. BLUEPRINT PETA MOTIF (POLA POTONG SEAMLESS)
-        </h2>
-        <div
-          class="w-full flex justify-center border border-slate-300 p-2 rounded bg-slate-50"
-        >
+        <h2 class="text-sm font-bold text-sky-700 uppercase mb-2">3. BLUEPRINT PETA MOTIF (POLA POTONG SEAMLESS)</h2>
+        <div class="w-full flex justify-center border border-slate-300 p-2 rounded bg-slate-50">
           <img id="pdfCanvasImg" class="w-full max-h-[350px] object-contain" />
         </div>
       </div>
     </div>
 
     <script>
+      // TOGGLE SIDEBAR DI HP
+      const btnToggle = document.getElementById("btnToggleSidebar");
+      const sidebar = document.getElementById("sidebar");
+      btnToggle.addEventListener("click", () => {
+        sidebar.classList.toggle("hidden");
+      });
+
       const PRESETS_DATA = {
         ideal: {
           panel: 16,
@@ -692,7 +408,7 @@
             { h: 60, wAtas: 65.0, wBawah: 60.0 },
             { h: 60, wAtas: 60.0, wBawah: 48.0 },
             { h: 60, wAtas: 48.0, wBawah: 32.0 },
-            { h: 75, wAtas: 32.0, wBawah: 10.0 },
+            { h: 70, wAtas: 32.0, wBawah: 12.0 },
           ],
         },
         ponorogo: {
@@ -707,7 +423,7 @@
             { h: 65, wAtas: 65.0, wBawah: 56.0 },
             { h: 65, wAtas: 56.0, wBawah: 42.0 },
             { h: 65, wAtas: 42.0, wBawah: 26.0 },
-            { h: 70, wAtas: 26.0, wBawah: 10.0 },
+            { h: 80, wAtas: 26.0, wBawah: 14.0 },
           ],
         },
         pekalongan: {
@@ -737,18 +453,15 @@
             { h: 50, wAtas: 53.5, wBawah: 44.0 },
             { h: 50, wAtas: 44.0, wBawah: 33.0 },
             { h: 50, wAtas: 33.0, wBawah: 22.0 },
-            { h: 60, wAtas: 22.0, wBawah: 8.0 },
+            { h: 60, wAtas: 22.0, wBawah: 10.0 },
           ],
         },
       };
 
       let gridData = JSON.parse(JSON.stringify(PRESETS_DATA.ideal.grid));
 
-      // KALKULASI OTOMATIS DIMENSI & ESTIMASI BAHAN
       function calculateBalloonDimensions() {
-        const numPanels =
-          parseInt(document.getElementById("inputPanel").value) || 16;
-
+        const numPanels = parseInt(document.getElementById("inputPanel").value) || 16;
         const totalHeightCm = gridData.reduce((sum, g) => sum + g.h, 0);
         const totalHeightM = totalHeightCm / 100;
 
@@ -763,36 +476,20 @@
         const maxDiameterM = maxDiameterCm / 100;
         const totalSheets = numPanels * gridData.length;
 
-        document.getElementById("lblTotalHeight").innerText =
-          `${totalHeightCm.toFixed(0)} cm (${totalHeightM.toFixed(2)} m)`;
-        document.getElementById("lblMaxDiameter").innerText =
-          `${maxDiameterCm.toFixed(0)} cm (${maxDiameterM.toFixed(2)} m)`;
-        document.getElementById("lblMaxCircumference").innerText =
-          `${maxCircumferenceCm.toFixed(0)} cm (${(maxCircumferenceCm / 100).toFixed(2)} m)`;
-        document.getElementById("lblTotalPaperSheets").innerText =
-          `${totalSheets} Lembar`;
+        document.getElementById("lblTotalHeight").innerText = `${totalHeightCm.toFixed(0)} cm (${totalHeightM.toFixed(2)} m)`;
+        document.getElementById("lblMaxDiameter").innerText = `${maxDiameterCm.toFixed(0)} cm (${maxDiameterM.toFixed(2)} m)`;
+        document.getElementById("lblMaxCircumference").innerText = `${maxCircumferenceCm.toFixed(0)} cm (${(maxCircumferenceCm / 100).toFixed(2)} m)`;
+        document.getElementById("lblTotalPaperSheets").innerText = `${totalSheets} Lembar`;
 
-        return {
-          totalHeightCm,
-          totalHeightM,
-          maxDiameterCm,
-          maxDiameterM,
-          maxCircumferenceCm,
-          totalSheets,
-        };
+        return { totalHeightCm, totalHeightM, maxDiameterCm, maxDiameterM, maxCircumferenceCm, totalSheets };
       }
 
-      // THREE.JS 3D VIEWPORT
+      // THREE.JS
       const container = document.getElementById("canvasContainer");
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x0f172a);
 
-      const camera = new THREE.PerspectiveCamera(
-        45,
-        container.clientWidth / (container.clientHeight || 1),
-        0.1,
-        1000,
-      );
+      const camera = new THREE.PerspectiveCamera(45, container.clientWidth / (container.clientHeight || 1), 0.1, 1000);
       camera.position.set(0, 0, 10);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -809,7 +506,6 @@
 
       let balloonMesh = null;
 
-      // CANVAS 2D
       const canvas2d = document.getElementById("textureCanvas");
       const ctx = canvas2d.getContext("2d");
 
@@ -826,41 +522,20 @@
       const parentContainer = document.getElementById("canvasParent");
 
       let scale = 0.5;
-      let panX = 0,
-        panY = 0;
-      let isPanning = false,
-        startPanX = 0,
-        startPanY = 0;
+      let panX = 0, panY = 0;
+      let isPanning = false, startPanX = 0, startPanY = 0;
 
       let imageLayers = [];
       let activeLayerIndex = -1;
 
-      // HISTORY - UNDO/REDO DISIMPANKAN DENGAN DEEP COPY
-      let historyStack = [],
-        historyStep = -1;
+      let historyStack = [], historyStep = -1;
 
       function saveHistory() {
-        if (historyStep < historyStack.length - 1)
-          historyStack = historyStack.slice(0, historyStep + 1);
-
+        if (historyStep < historyStack.length - 1) historyStack = historyStack.slice(0, historyStep + 1);
         historyStack.push({
-          drawData: drawCtx.getImageData(
-            0,
-            0,
-            drawCanvas.width,
-            drawCanvas.height,
-          ),
-          layersData: JSON.parse(
-            JSON.stringify(
-              imageLayers.map((l) => {
-                const copy = { ...l };
-                delete copy.img; // Hapus elemen DOM dari stringify
-                return copy;
-              }),
-            ),
-          ),
+          drawData: drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height),
+          layersData: imageLayers.map((l) => ({ ...l })),
         });
-
         if (historyStack.length > 20) historyStack.shift();
         else historyStep++;
       }
@@ -882,14 +557,9 @@
       function restoreHistoryState() {
         const state = historyStack[historyStep];
         drawCtx.putImageData(state.drawData, 0, 0);
-
-        state.layersData.forEach((savedL, idx) => {
-          if (imageLayers[idx]) {
-            Object.assign(imageLayers[idx], savedL);
-          }
-        });
-
+        imageLayers = state.layersData.map((l) => ({ ...l }));
         updateLayerListUI();
+        updateControlsUI();
         renderComposite();
       }
 
@@ -900,22 +570,13 @@
         wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
       }
 
-      parentContainer.addEventListener(
-        "wheel",
-        (e) => {
-          e.preventDefault();
-          scale =
-            e.deltaY < 0
-              ? Math.min(scale + 0.05, 2.5)
-              : Math.max(scale - 0.05, 0.2);
-          applyTransform();
-        },
-        { passive: false },
-      );
+      parentContainer.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        scale = e.deltaY < 0 ? Math.min(scale + 0.05, 2.5) : Math.max(scale - 0.05, 0.2);
+        applyTransform();
+      }, { passive: false });
 
-      parentContainer.addEventListener("contextmenu", (e) =>
-        e.preventDefault(),
-      );
+      parentContainer.addEventListener("contextmenu", (e) => e.preventDefault());
       parentContainer.addEventListener("mousedown", (e) => {
         if (e.button === 2 || e.button === 1) {
           isPanning = true;
@@ -931,14 +592,12 @@
         }
       });
       window.addEventListener("mouseup", () => (isPanning = false));
-      document
-        .getElementById("btnResetPanZoom")
-        .addEventListener("click", () => {
-          scale = 0.5;
-          panX = 0;
-          panY = 0;
-          applyTransform();
-        });
+      document.getElementById("btnResetPanZoom").addEventListener("click", () => {
+        scale = 0.5;
+        panX = 0;
+        panY = 0;
+        applyTransform();
+      });
 
       let renderPanelsScheduled = false;
 
@@ -963,10 +622,8 @@
                 ctx.save();
                 const cx = rx * tileW + tileW / 2 + layer.posX;
                 const cy = ry * tileH + tileH / 2 + layer.posY;
-
                 ctx.translate(cx, cy);
                 ctx.rotate((layer.rot * Math.PI) / 180);
-
                 ctx.drawImage(layer.img, -drawW / 2, -drawH / 2, drawW, drawH);
                 ctx.restore();
               }
@@ -974,22 +631,15 @@
           } else {
             const cx = canvas2d.width / 2 + layer.posX;
             const cy = canvas2d.height / 2 + layer.posY;
-
             ctx.translate(cx, cy);
             ctx.rotate((layer.rot * Math.PI) / 180);
-
             ctx.drawImage(layer.img, -drawW / 2, -drawH / 2, drawW, drawH);
 
             if (idx === activeLayerIndex) {
               ctx.strokeStyle = "#0284c7";
               ctx.lineWidth = 2;
               ctx.setLineDash([6, 6]);
-              ctx.strokeRect(
-                -drawW / 2 - 4,
-                -drawH / 2 - 4,
-                drawW + 8,
-                drawH + 8,
-              );
+              ctx.strokeRect(-drawW / 2 - 4, -drawH / 2 - 4, drawW + 8, drawH + 8);
               ctx.setLineDash([]);
             }
           }
@@ -1012,8 +662,7 @@
 
       function drawGridGuidelines() {
         const numGrids = gridData.length;
-        const numPanels =
-          parseInt(document.getElementById("inputPanel").value) || 16;
+        const numPanels = parseInt(document.getElementById("inputPanel").value) || 16;
 
         ctx.lineWidth = 1.5;
         for (let i = 1; i < numGrids; i++) {
@@ -1039,12 +688,10 @@
       }
 
       function renderAllCutPanelsSeamless() {
-        const numPanels =
-          parseInt(document.getElementById("inputPanel").value) || 16;
+        const numPanels = parseInt(document.getElementById("inputPanel").value) || 16;
         const dims = calculateBalloonDimensions();
 
-        document.getElementById("lblPanelInfo").innerText =
-          `${numPanels} panel • T: ${dims.totalHeightCm.toFixed(0)}cm • D: ${dims.maxDiameterCm.toFixed(0)}cm`;
+        document.getElementById("lblPanelInfo").innerText = `${numPanels} panel • T: ${dims.totalHeightCm.toFixed(0)}cm • D: ${dims.maxDiameterCm.toFixed(0)}cm`;
 
         const marginY = 40;
         const availableH = 700 - marginY * 2;
@@ -1055,22 +702,12 @@
         let currentY = marginY;
 
         let halfWTop = (gridData[0].wAtas * scalePx) / 2;
-        relativeGeometry.push({
-          left: -halfWTop,
-          right: halfWTop,
-          y: currentY,
-          w: gridData[0].wAtas,
-        });
+        relativeGeometry.push({ left: -halfWTop, right: halfWTop, y: currentY, w: gridData[0].wAtas });
 
         gridData.forEach((g) => {
           currentY += g.h * scalePx;
           let halfW = (g.wBawah * scalePx) / 2;
-          relativeGeometry.push({
-            left: -halfW,
-            right: halfW,
-            y: currentY,
-            w: g.wBawah,
-          });
+          relativeGeometry.push({ left: -halfW, right: halfW, y: currentY, w: g.wBawah });
         });
 
         const maxHalfW = Math.max(...relativeGeometry.map((pt) => pt.right));
@@ -1079,48 +716,28 @@
         allPanelsCanvas.width = panelStepX * numPanels;
         allPanelsCanvas.height = 700;
 
-        panelsCtx.clearRect(
-          0,
-          0,
-          allPanelsCanvas.width,
-          allPanelsCanvas.height,
-        );
+        panelsCtx.clearRect(0, 0, allPanelsCanvas.width, allPanelsCanvas.height);
         panelsCtx.fillStyle = "#ffffff";
         panelsCtx.fillRect(0, 0, allPanelsCanvas.width, allPanelsCanvas.height);
 
         for (let p = 0; p < numPanels; p++) {
           const centerX = p * panelStepX + maxHalfW;
 
-          const leftPoints = relativeGeometry.map((pt) => ({
-            x: centerX + pt.left,
-            y: pt.y,
-            w: pt.w,
-          }));
-          const rightPoints = relativeGeometry.map((pt) => ({
-            x: centerX + pt.right,
-            y: pt.y,
-          }));
+          const leftPoints = relativeGeometry.map((pt) => ({ x: centerX + pt.left, y: pt.y, w: pt.w }));
+          const rightPoints = relativeGeometry.map((pt) => ({ x: centerX + pt.right, y: pt.y }));
 
           panelsCtx.save();
           panelsCtx.beginPath();
           panelsCtx.moveTo(leftPoints[0].x, leftPoints[0].y);
-          for (let i = 1; i < leftPoints.length; i++)
-            panelsCtx.lineTo(leftPoints[i].x, leftPoints[i].y);
-          for (let i = rightPoints.length - 1; i >= 0; i--)
-            panelsCtx.lineTo(rightPoints[i].x, rightPoints[i].y);
+          for (let i = 1; i < leftPoints.length; i++) panelsCtx.lineTo(leftPoints[i].x, leftPoints[i].y);
+          for (let i = rightPoints.length - 1; i >= 0; i--) panelsCtx.lineTo(rightPoints[i].x, rightPoints[i].y);
           panelsCtx.closePath();
           panelsCtx.clip();
 
           panelsCtx.drawImage(
             canvas2d,
-            p * sliceWidthSrc,
-            0,
-            sliceWidthSrc,
-            canvas2d.height,
-            centerX - (sliceWidthSrc * scalePx) / 2,
-            marginY,
-            sliceWidthSrc * scalePx,
-            availableH,
+            p * sliceWidthSrc, 0, sliceWidthSrc, canvas2d.height,
+            centerX - (sliceWidthSrc * scalePx) / 2, marginY, sliceWidthSrc * scalePx, availableH
           );
           panelsCtx.restore();
 
@@ -1128,10 +745,8 @@
           panelsCtx.lineWidth = 1.5;
           panelsCtx.beginPath();
           panelsCtx.moveTo(leftPoints[0].x, leftPoints[0].y);
-          for (let i = 1; i < leftPoints.length; i++)
-            panelsCtx.lineTo(leftPoints[i].x, leftPoints[i].y);
-          for (let i = rightPoints.length - 1; i >= 0; i--)
-            panelsCtx.lineTo(rightPoints[i].x, rightPoints[i].y);
+          for (let i = 1; i < leftPoints.length; i++) panelsCtx.lineTo(leftPoints[i].x, leftPoints[i].y);
+          for (let i = rightPoints.length - 1; i >= 0; i--) panelsCtx.lineTo(rightPoints[i].x, rightPoints[i].y);
           panelsCtx.closePath();
           panelsCtx.stroke();
 
@@ -1146,14 +761,7 @@
             panelsCtx.moveTo(leftPoints[i].x, leftPoints[i].y);
             panelsCtx.lineTo(rightPoints[i].x, rightPoints[i].y);
             panelsCtx.stroke();
-
-            if (p === 0) {
-              panelsCtx.fillText(
-                `K${i} ${leftPoints[i].w}cm`,
-                2,
-                leftPoints[i].y - 3,
-              );
-            }
+            if (p === 0) panelsCtx.fillText(`K${i} ${leftPoints[i].w}cm`, 2, leftPoints[i].y - 3);
           }
           panelsCtx.setLineDash([]);
 
@@ -1168,49 +776,56 @@
       let isDrawing = false;
       function getCanvasPos(e) {
         const rect = canvas2d.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         return {
-          x: (e.clientX - rect.left) * (canvas2d.width / rect.width),
-          y: (e.clientY - rect.top) * (canvas2d.height / rect.height),
+          x: (clientX - rect.left) * (canvas2d.width / rect.width),
+          y: (clientY - rect.top) * (canvas2d.height / rect.height),
         };
       }
 
-      canvas2d.addEventListener("mousedown", (e) => {
-        if (e.button !== 0) return;
-        isDrawing = true;
-        const pos = getCanvasPos(e);
-        drawCtx.beginPath();
-        drawCtx.moveTo(pos.x, pos.y);
+      // TOUCH & MOUSE INTERACTION FOR DRAWING
+      ["mousedown", "touchstart"].forEach((evt) => {
+        canvas2d.addEventListener(evt, (e) => {
+          if (e.type === "mousedown" && e.button !== 0) return;
+          isDrawing = true;
+          const pos = getCanvasPos(e);
+          drawCtx.beginPath();
+          drawCtx.moveTo(pos.x, pos.y);
+        });
       });
 
-      canvas2d.addEventListener("mousemove", (e) => {
-        if (!isDrawing) return;
-        const pos = getCanvasPos(e);
-        drawCtx.strokeStyle = document.getElementById("drawColor").value;
-        drawCtx.lineWidth = document.getElementById("brushSize").value;
-        drawCtx.lineCap = "round";
-        drawCtx.lineTo(pos.x, pos.y);
-        drawCtx.stroke();
-        renderComposite();
+      ["mousemove", "touchmove"].forEach((evt) => {
+        canvas2d.addEventListener(evt, (e) => {
+          if (!isDrawing) return;
+          const pos = getCanvasPos(e);
+          drawCtx.strokeStyle = document.getElementById("drawColor").value;
+          drawCtx.lineWidth = document.getElementById("brushSize").value;
+          drawCtx.lineCap = "round";
+          drawCtx.lineTo(pos.x, pos.y);
+          drawCtx.stroke();
+          renderComposite();
+        });
       });
 
-      canvas2d.addEventListener("mouseup", () => {
-        if (isDrawing) {
-          isDrawing = false;
-          saveHistory();
-        }
+      ["mouseup", "touchend"].forEach((evt) => {
+        window.addEventListener(evt, () => {
+          if (isDrawing) {
+            isDrawing = false;
+            saveHistory();
+          }
+        });
       });
 
       document.getElementById("brushSize").addEventListener("input", (e) => {
         document.getElementById("lblBrushSize").innerText = e.target.value;
       });
 
-      document
-        .getElementById("btnClearCanvas")
-        .addEventListener("click", () => {
-          drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-          saveHistory();
-          renderComposite();
-        });
+      document.getElementById("btnClearCanvas").addEventListener("click", () => {
+        drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+        saveHistory();
+        renderComposite();
+      });
 
       document.getElementById("btnExportPNG").addEventListener("click", () => {
         const link = document.createElement("a");
@@ -1219,45 +834,32 @@
         link.click();
       });
 
-      // FITUR BARU: DOWNLOAD GAMBAR MOTIF 2D KANVAS MENTAH
-      document
-        .getElementById("btnExport2DMotif")
-        .addEventListener("click", () => {
-          const link = document.createElement("a");
-          link.download = "motif-peta-2d-balon.png";
-          link.href = canvas2d.toDataURL("image/png");
-          link.click();
-        });
+      document.getElementById("btnExport2DMotif").addEventListener("click", () => {
+        const link = document.createElement("a");
+        link.download = "motif-peta-2d-balon.png";
+        link.href = canvas2d.toDataURL("image/png");
+        link.click();
+      });
 
-      document
-        .getElementById("btnExportPDF")
-        .addEventListener("click", async () => {
-          const numPanels = document.getElementById("inputPanel").value;
-          const dims = calculateBalloonDimensions();
+      document.getElementById("btnExportPDF").addEventListener("click", async () => {
+        const numPanels = document.getElementById("inputPanel").value;
+        const dims = calculateBalloonDimensions();
 
-          document.getElementById("pdfDate").innerText =
-            new Date().toLocaleDateString("id-ID");
-          document.getElementById("pdfValPanel").innerText =
-            `${numPanels} Panel`;
-          document.getElementById("pdfValHeight").innerText =
-            `${dims.totalHeightCm.toFixed(0)} cm (${dims.totalHeightM.toFixed(2)} m)`;
-          document.getElementById("pdfValDiameter").innerText =
-            `${dims.maxDiameterCm.toFixed(0)} cm (${dims.maxDiameterM.toFixed(2)} m)`;
-          document.getElementById("pdfValCircumference").innerText =
-            `${dims.maxCircumferenceCm.toFixed(0)} cm (${(dims.maxCircumferenceCm / 100).toFixed(2)} m)`;
-          document.getElementById("pdfValTotalSheets").innerText =
-            `${dims.totalSheets} Lembar Kertas Fisik`;
+        document.getElementById("pdfDate").innerText = new Date().toLocaleDateString("id-ID");
+        document.getElementById("pdfValPanel").innerText = `${numPanels} Panel`;
+        document.getElementById("pdfValHeight").innerText = `${dims.totalHeightCm.toFixed(0)} cm (${dims.totalHeightM.toFixed(2)} m)`;
+        document.getElementById("pdfValDiameter").innerText = `${dims.maxDiameterCm.toFixed(0)} cm (${dims.maxDiameterM.toFixed(2)} m)`;
+        document.getElementById("pdfValCircumference").innerText = `${dims.maxCircumferenceCm.toFixed(0)} cm (${(dims.maxCircumferenceCm / 100).toFixed(2)} m)`;
+        document.getElementById("pdfValTotalSheets").innerText = `${dims.totalSheets} Lembar Kertas Fisik`;
 
-          const pdfTbody = document.getElementById("pdfTableBody");
-          pdfTbody.innerHTML = "";
+        const pdfTbody = document.getElementById("pdfTableBody");
+        pdfTbody.innerHTML = "";
 
-          gridData.forEach((g, i) => {
-            const deltaWidthHalf = Math.abs(g.wBawah - g.wAtas) / 2;
-            const kemiringan = Math.sqrt(
-              Math.pow(g.h, 2) + Math.pow(deltaWidthHalf, 2),
-            );
+        gridData.forEach((g, i) => {
+          const deltaWidthHalf = Math.abs(g.wBawah - g.wAtas) / 2;
+          const kemiringan = Math.sqrt(Math.pow(g.h, 2) + Math.pow(deltaWidthHalf, 2));
 
-            pdfTbody.innerHTML += `
+          pdfTbody.innerHTML += `
             <tr>
               <td class="p-2 border-slate-200 font-semibold text-slate-700">Kertas ${i + 1}</td>
               <td class="p-2 border-slate-200">${g.h} cm</td>
@@ -1266,35 +868,29 @@
               <td class="p-2 border-slate-200 font-bold text-sky-700">${kemiringan.toFixed(1)} cm</td>
             </tr>
           `;
-          });
-
-          document.getElementById("pdfCanvasImg").src =
-            allPanelsCanvas.toDataURL("image/png");
-
-          const element = document.getElementById("pdfPrintTemplate");
-          const canvas = await html2canvas(element, { scale: 2 });
-          const imgData = canvas.toDataURL("image/png");
-
-          const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF("p", "mm", "a4");
-          const imgWidth = 210;
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-          pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-          pdf.save(`lembar-kerja-balon-${new Date().getTime()}.pdf`);
         });
+
+        document.getElementById("pdfCanvasImg").src = allPanelsCanvas.toDataURL("image/png");
+
+        const element = document.getElementById("pdfPrintTemplate");
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL("image/png");
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+        pdf.save(`lembar-kerja-balon-${new Date().getTime()}.pdf`);
+      });
 
       function autofitActiveLayer(mode = "fit") {
         if (activeLayerIndex < 0 || !imageLayers[activeLayerIndex]) return;
-
         const layer = imageLayers[activeLayerIndex];
         const img = layer.img;
 
-        layer.posX = 0;
-        layer.posY = 0;
-        layer.rot = 0;
-        layer.scale = 100;
-
+        layer.posX = 0; layer.posY = 0; layer.rot = 0; layer.scale = 100;
         const imgAspect = img.width / img.height;
         const canvasAspect = canvas2d.width / canvas2d.height;
 
@@ -1315,18 +911,13 @@
             layer.customW = Math.round(canvas2d.height * imgAspect);
           }
         }
-
         updateControlsUI();
         saveHistory();
         renderComposite();
       }
 
-      document
-        .getElementById("btnAutofitFit")
-        .addEventListener("click", () => autofitActiveLayer("fit"));
-      document
-        .getElementById("btnAutofitCover")
-        .addEventListener("click", () => autofitActiveLayer("cover"));
+      document.getElementById("btnAutofitFit").addEventListener("click", () => autofitActiveLayer("fit"));
+      document.getElementById("btnAutofitCover").addEventListener("click", () => autofitActiveLayer("cover"));
 
       document.getElementById("uploadImage").addEventListener("change", (e) => {
         const file = e.target.files[0];
@@ -1338,7 +929,6 @@
           img.onload = () => {
             const aspect = img.width / img.height;
             let initW, initH;
-
             if (aspect > 1) {
               initW = canvas2d.width;
               initH = Math.round(canvas2d.width / aspect);
@@ -1349,10 +939,7 @@
 
             const newLayer = {
               id: Date.now(),
-              name:
-                file.name.length > 15
-                  ? file.name.substring(0, 12) + "..."
-                  : file.name,
+              name: file.name.length > 15 ? file.name.substring(0, 12) + "..." : file.name,
               img: img,
               customW: initW,
               customH: initH,
@@ -1368,7 +955,6 @@
 
             imageLayers.push(newLayer);
             activeLayerIndex = imageLayers.length - 1;
-
             updateLayerListUI();
             updateControlsUI();
             saveHistory();
@@ -1385,8 +971,7 @@
         container.innerHTML = "";
 
         if (imageLayers.length === 0) {
-          container.innerHTML =
-            '<p id="lblNoLayer" class="text-[10px] text-slate-500 text-center py-2">Belum ada gambar yang di-upload</p>';
+          container.innerHTML = '<p id="lblNoLayer" class="text-[10px] text-slate-500 text-center py-2">Belum ada gambar yang di-upload</p>';
           activeLayerIndex = -1;
           updateControlsUI();
           return;
@@ -1396,23 +981,18 @@
           const item = document.createElement("div");
           const isActive = idx === activeLayerIndex;
           item.className = `flex items-center justify-between p-1 rounded text-xs cursor-pointer ${
-            isActive
-              ? "bg-sky-600 text-white font-semibold"
-              : "bg-slate-800 hover:bg-slate-700 text-slate-300"
+            isActive ? "bg-sky-600 text-white font-semibold" : "bg-slate-800 hover:bg-slate-700 text-slate-300"
           }`;
-
           item.innerHTML = `
             <span class="truncate text-[11px]">📷 ${layer.name} ${layer.autoRepeat ? "🔁" : ""}</span>
             <span class="text-[9px] opacity-75">L${idx + 1}</span>
           `;
-
           item.onclick = () => {
             activeLayerIndex = idx;
             updateLayerListUI();
             updateControlsUI();
             renderComposite();
           };
-
           container.appendChild(item);
         });
       }
@@ -1428,20 +1008,14 @@
         const layer = imageLayers[activeLayerIndex];
 
         document.getElementById("imgWidthPx").value = Math.round(layer.customW);
-        document.getElementById("imgHeightPx").value = Math.round(
-          layer.customH,
-        );
+        document.getElementById("imgHeightPx").value = Math.round(layer.customH);
         document.getElementById("chkLockAspect").checked = layer.lockAspect;
-
         document.getElementById("imgScale").value = layer.scale;
         document.getElementById("lblImgScale").innerText = layer.scale;
-
         document.getElementById("imgRot").value = layer.rot;
         document.getElementById("lblImgRot").innerText = layer.rot;
-
         document.getElementById("imgPosX").value = layer.posX;
         document.getElementById("imgPosY").value = layer.posY;
-
         document.getElementById("chkAutoRepeat").checked = layer.autoRepeat;
         document.getElementById("repeatX").value = layer.repeatX;
         document.getElementById("lblRepeatX").innerText = layer.repeatX;
@@ -1457,7 +1031,6 @@
         if (activeLayerIndex >= 0) {
           const layer = imageLayers[activeLayerIndex];
           const newW = Math.max(10, parseInt(e.target.value) || 10);
-
           if (layer.lockAspect && layer.customW > 0) {
             const aspect = layer.customH / layer.customW;
             layer.customH = Math.round(newW * aspect);
@@ -1472,7 +1045,6 @@
         if (activeLayerIndex >= 0) {
           const layer = imageLayers[activeLayerIndex];
           const newH = Math.max(10, parseInt(e.target.value) || 10);
-
           if (layer.lockAspect && layer.customH > 0) {
             const aspect = layer.customW / layer.customH;
             layer.customW = Math.round(newH * aspect);
@@ -1483,24 +1055,18 @@
         }
       });
 
-      document
-        .getElementById("chkLockAspect")
-        .addEventListener("change", (e) => {
-          if (activeLayerIndex >= 0) {
-            imageLayers[activeLayerIndex].lockAspect = e.target.checked;
-          }
-        });
+      document.getElementById("chkLockAspect").addEventListener("change", (e) => {
+        if (activeLayerIndex >= 0) imageLayers[activeLayerIndex].lockAspect = e.target.checked;
+      });
 
-      document
-        .getElementById("chkAutoRepeat")
-        .addEventListener("change", (e) => {
-          if (activeLayerIndex >= 0) {
-            imageLayers[activeLayerIndex].autoRepeat = e.target.checked;
-            updateLayerListUI();
-            updateControlsUI();
-            renderComposite();
-          }
-        });
+      document.getElementById("chkAutoRepeat").addEventListener("change", (e) => {
+        if (activeLayerIndex >= 0) {
+          imageLayers[activeLayerIndex].autoRepeat = e.target.checked;
+          updateLayerListUI();
+          updateControlsUI();
+          renderComposite();
+        }
+      });
 
       document.getElementById("repeatX").addEventListener("input", (e) => {
         if (activeLayerIndex >= 0) {
@@ -1548,20 +1114,20 @@
         }
       });
 
-      document
-        .getElementById("btnDeleteLayer")
-        .addEventListener("click", () => {
-          if (activeLayerIndex >= 0) {
-            imageLayers.splice(activeLayerIndex, 1);
-            activeLayerIndex = imageLayers.length - 1;
-            updateLayerListUI();
-            updateControlsUI();
-            saveHistory();
-            renderComposite();
-          }
-        });
+      document.getElementById("btnDeleteLayer").addEventListener("click", () => {
+        if (activeLayerIndex >= 0) {
+          imageLayers.splice(activeLayerIndex, 1);
+          activeLayerIndex = imageLayers.length - 1;
+          updateLayerListUI();
+          updateControlsUI();
+          saveHistory();
+          renderComposite();
+        }
+      });
 
       function setupResizable() {
+        if (window.innerWidth < 768) return; // Nonaktifkan resizer di HP
+
         const resizerSidebar = document.getElementById("resizerSidebar");
         const sidebar = document.getElementById("sidebar");
 
@@ -1571,10 +1137,7 @@
           const startWidth = sidebar.getBoundingClientRect().width;
 
           function onMouseMove(e) {
-            const newWidth = Math.max(
-              200,
-              Math.min(600, startWidth + (e.clientX - startX)),
-            );
+            const newWidth = Math.max(200, Math.min(600, startWidth + (e.clientX - startX)));
             sidebar.style.width = `${newWidth}px`;
             triggerResizeEvent();
           }
@@ -1614,9 +1177,7 @@
           window.addEventListener("mouseup", onMouseUp);
         });
 
-        const resizerRightVertical = document.getElementById(
-          "resizerRightVertical",
-        );
+        const resizerRightVertical = document.getElementById("resizerRightVertical");
         const canvasContainer = document.getElementById("canvasContainer");
 
         resizerRightVertical.addEventListener("mousedown", (e) => {
@@ -1649,8 +1210,7 @@
       }
 
       function build3DBalloon() {
-        const numPanels =
-          parseInt(document.getElementById("inputPanel").value) || 16;
+        const numPanels = parseInt(document.getElementById("inputPanel").value) || 16;
         const isWireframe = document.getElementById("chkWireframe").checked;
 
         if (balloonMesh) scene.remove(balloonMesh);
@@ -1659,9 +1219,7 @@
         const totalH_cm = gridData.reduce((acc, curr) => acc + curr.h, 0);
 
         let rAtas0 = (gridData[0].wAtas * numPanels) / (2 * Math.PI) / 100;
-        points.push(
-          new THREE.Vector2(Math.max(rAtas0, 0.001), totalH_cm / 2 / 100),
-        );
+        points.push(new THREE.Vector2(Math.max(rAtas0, 0.001), totalH_cm / 2 / 100));
 
         let accumH = 0;
         gridData.forEach((g) => {
@@ -1689,15 +1247,12 @@
         scene.add(balloonMesh);
       }
 
-      // TABEL GRID EDITOR DENGAN VALIDASI WARNA BATAS KERTAS MAX (95x70 CM)
       function renderGridEditorTable() {
         const tbody = document.getElementById("gridEditorBody");
         tbody.innerHTML = "";
 
         gridData.forEach((g, idx) => {
           const isOverH = g.h > 95;
-          const isOverW = g.wAtas > 70 || g.wBawah > 70;
-
           tbody.innerHTML += `
           <tr class="border-b border-slate-800">
             <td class="p-1 font-bold text-sky-400">K${idx + 1}</td>
@@ -1724,13 +1279,10 @@
         renderGridEditorTable();
       }
 
-      document
-        .getElementById("selectPreset")
-        .addEventListener("change", (e) => {
-          applyPreset(e.target.value);
-        });
+      document.getElementById("selectPreset").addEventListener("change", (e) => {
+        applyPreset(e.target.value);
+      });
 
-      // UPDATE GRID DENGAN SYNC SINKRONISASI OTOMATIS
       window.updateGridVal = function (index, field, val) {
         const numVal = parseFloat(val) || 0;
         gridData[index][field] = numVal;
@@ -1742,68 +1294,57 @@
         }
 
         document.getElementById("selectPreset").value = "custom";
-        renderGridEditorTable(); // Render ulang agar UI input sel tetangga langsung diperbarui
+        renderGridEditorTable();
       };
 
       window.switchTab = function (tab) {
         if (tab === "grid") {
           document.getElementById("sectionGrid").classList.remove("hidden");
           document.getElementById("sectionMotif").classList.add("hidden");
-          document.getElementById("tabGrid").className =
-            "flex-1 bg-sky-600 text-white text-xs font-bold py-1.5 rounded transition";
-          document.getElementById("tabMotif").className =
-            "flex-1 text-slate-400 hover:text-white text-xs font-bold py-1.5 rounded transition";
+          document.getElementById("tabGrid").className = "flex-1 bg-sky-600 text-white text-xs font-bold py-2 rounded transition";
+          document.getElementById("tabMotif").className = "flex-1 text-slate-400 hover:text-white text-xs font-bold py-2 rounded transition";
         } else {
           document.getElementById("sectionGrid").classList.add("hidden");
           document.getElementById("sectionMotif").classList.remove("hidden");
-          document.getElementById("tabGrid").className =
-            "flex-1 text-slate-400 hover:text-white text-xs font-bold py-1.5 rounded transition";
-          document.getElementById("tabMotif").className =
-            "flex-1 bg-sky-600 text-white text-xs font-bold py-1.5 rounded transition";
+          document.getElementById("tabGrid").className = "flex-1 text-slate-400 hover:text-white text-xs font-bold py-2 rounded transition";
+          document.getElementById("tabMotif").className = "flex-1 bg-sky-600 text-white text-xs font-bold py-2 rounded transition";
         }
       };
 
-      document
-        .getElementById("btnResetDefault")
-        .addEventListener("click", () => {
-          applyPreset("ideal");
-        });
+      document.getElementById("btnResetDefault").addEventListener("click", () => {
+        applyPreset("ideal");
+      });
 
-      document
-        .getElementById("inputGridCount")
-        .addEventListener("change", () => {
-          const n =
-            parseInt(document.getElementById("inputGridCount").value) || 8;
+      document.getElementById("inputGridCount").addEventListener("change", () => {
+        const n = parseInt(document.getElementById("inputGridCount").value) || 8;
+        gridData = [];
+        const maxW = 65;
+        const minWBottom = 12;
 
-          gridData = [];
-          const maxW = 65;
-          const minWBottom = 12;
+        for (let i = 0; i < n; i++) {
+          const tTop = i / n;
+          const tBottom = (i + 1) / n;
+          let wAtas = i === 0 ? 0 : Math.sin(tTop * Math.PI) * maxW;
+          let wBawah = Math.sin(tBottom * Math.PI) * maxW;
 
-          for (let i = 0; i < n; i++) {
-            const tTop = i / n;
-            const tBottom = (i + 1) / n;
-
-            let wAtas = i === 0 ? 0 : Math.sin(tTop * Math.PI) * maxW;
-            let wBawah = Math.sin(tBottom * Math.PI) * maxW;
-
-            if (i === n - 1) {
-              wBawah = minWBottom;
-            } else if (wBawah < minWBottom && i > n / 2) {
-              wBawah = minWBottom + wBawah * 0.5;
-            }
-
-            let h = i === 0 ? 10 : i === n - 1 ? 70 : 60;
-
-            gridData.push({
-              h: h,
-              wAtas: parseFloat(wAtas.toFixed(1)),
-              wBawah: parseFloat(wBawah.toFixed(1)),
-            });
+          if (i === n - 1) {
+            wBawah = minWBottom;
+          } else if (wBawah < minWBottom && i > n / 2) {
+            wBawah = minWBottom + wBawah * 0.5;
           }
 
-          document.getElementById("selectPreset").value = "custom";
-          renderGridEditorTable();
-        });
+          let h = i === 0 ? 10 : i === n - 1 ? 70 : 60;
+
+          gridData.push({
+            h: h,
+            wAtas: parseFloat(wAtas.toFixed(1)),
+            wBawah: parseFloat(wBawah.toFixed(1)),
+          });
+        }
+
+        document.getElementById("selectPreset").value = "custom";
+        renderGridEditorTable();
+      });
 
       document.getElementById("inputPanel").addEventListener("change", () => {
         document.getElementById("selectPreset").value = "custom";
@@ -1812,9 +1353,7 @@
         renderComposite();
       });
 
-      document
-        .getElementById("chkWireframe")
-        .addEventListener("change", build3DBalloon);
+      document.getElementById("chkWireframe").addEventListener("change", build3DBalloon);
       window.addEventListener("resize", triggerResizeEvent);
 
       function animate() {
