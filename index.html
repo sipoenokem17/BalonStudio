@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>Balon Studio 3D</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -73,6 +73,68 @@
           display: none !important;
         }
       }
+    
+      body.h-screen { height: 100dvh; overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+      #viewportViewport { position: relative; overflow: hidden; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+      #canvasTransformWrapper { transition: none !important; will-change: transform; }
+      #canvasContainer canvas { touch-action: none; }
+      #zoomCtl button { width: 40px; height: 40px; background: rgba(30,41,59,.9); border: 1px solid #475569; border-radius: 10px; font-size: 18px; line-height: 1; color: #fff; }
+      .fakeFS { position: fixed !important; inset: 0; z-index: 100; width: 100% !important; height: 100% !important; }
+      .compact-only { display: none; }
+      #bottomNav button { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; height: 56px; font-size: 11px; font-weight: 700; color: #94a3b8; border-top: 3px solid transparent; }
+      #bottomNav button span { font-size: 20px; line-height: 1; }
+      #bottomNav button.navOn { color: #38bdf8; border-top-color: #0ea5e9; background: rgba(14,165,233,.08); }
+
+      /* ===== MODE KOMPAK: HP portrait & HP landscape (layar pendek) ===== */
+      @media (max-width: 767px), (max-height: 480px) {
+        body { flex-direction: column !important; padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left); }
+        .compact-only { display: flex !important; }
+        #bottomNav { background: #1e293b; border-top: 1px solid #334155; padding-bottom: env(safe-area-inset-bottom); flex-shrink: 0; z-index: 50; }
+        @media (max-height: 480px) { #bottomNav button { height: 44px; flex-direction: row; gap: 6px; } #bottomNav button span { font-size: 16px; } }
+        #btnToggleSidebar { display: none; }
+        .resizer-h, .resizer-v { display: none !important; }
+
+        /* satu tampilan per tab */
+        #sidebar { position: static !important; width: 100% !important; display: none !important; flex: 1 1 0; min-height: 0; padding-bottom: 24px; -webkit-overflow-scrolling: touch; }
+        body[data-view="atur"] #sidebar { display: flex !important; }
+        #mainWorkspace { display: none !important; flex: 1 1 0; min-height: 0; flex-direction: column !important; overflow: hidden !important; }
+        body:not([data-view="atur"]) #mainWorkspace { display: flex !important; }
+        #canvasParent { display: none !important; width: 100% !important; height: auto !important; flex: 1 1 0 !important; min-height: 0; }
+        body[data-view="motif"] #canvasParent { display: flex !important; }
+        #rightContainer { display: none !important; width: 100%; height: auto; min-height: 0 !important; flex: 1 1 0; }
+        body[data-view="td"] #rightContainer, body[data-view="pola"] #rightContainer { display: flex !important; }
+        #canvasContainer { display: none !important; height: auto !important; flex: 1 1 0; min-height: 0; }
+        body[data-view="td"] #canvasContainer { display: block !important; }
+        #bottomContainer { display: none !important; min-height: 0 !important; }
+        body[data-view="pola"] #bottomContainer { display: flex !important; flex: 1 1 0; }
+
+        /* kanvas: toolbar tidak lagi menutupi gambar */
+        #canvasParent { flex-direction: column; }
+        #canvasParent > .absolute { position: static !important; inset: auto !important; margin: 0 !important; border-radius: 0 !important; border-left: 0; border-right: 0; flex-shrink: 0; background: #1e293b; }
+        #canvasParent > .absolute:first-child { order: 0; flex-wrap: wrap; padding: 6px 8px; }
+        #viewportViewport { order: 1; flex: 1 1 0; height: auto !important; min-height: 0; }
+        #layerTouchBar, #drawTouchBar { order: 2; padding: 8px 10px; }
+        #drawTouchBar { flex-wrap: wrap; row-gap: 8px; }
+        #drawTouchBar > div:first-child { flex: 1 1 100%; flex-wrap: wrap; }
+        #brushSizeFS { width: 100%; }
+        #drawTouchBar > div:first-child > div:last-of-type { flex: 1; }
+        #swatches { display: flex; gap: 8px; align-items: center; }
+
+        /* target sentuh & keterbacaan */
+        #canvasParent button, #drawTouchBar label.cursor-pointer { min-height: 40px; min-width: 40px; padding-left: 10px; padding-right: 10px; display: inline-flex; align-items: center; justify-content: center; }
+        [class*="text-[8px]"], [class*="text-[9px]"], [class*="text-[10px]"] { font-size: 12px !important; }
+        [class*="text-[11px]"], .text-xs { font-size: 13px !important; }
+        input[type="number"], select { font-size: 16px !important; min-height: 42px; }
+        #gridEditorBody input { height: 42px; font-size: 16px !important; }
+        #sectionGrid .overflow-y-auto { max-height: none !important; }
+        #layerListContainer { max-height: 9rem !important; }
+        #layerListContainer > div { min-height: 40px; padding: 8px !important; }
+        input[type="range"] { height: 32px; }
+        input[type="checkbox"] { width: 20px; height: 20px; }
+        #tabGrid, #tabMotif, #sectionMotif button, #sectionMotif label, #btnResetDefault { min-height: 44px; }
+        #canvasContainer > .absolute { max-width: calc(100% - 24px); }
+        #canvasContainer button { min-height: 36px; }
+      }
     </style>
   </head>
   <body
@@ -80,7 +142,7 @@
   >
     <!-- NAVBAR MOBILE -->
     <div
-      class="md:hidden bg-slate-800 p-2.5 border-b border-slate-700 flex justify-between items-center z-50 flex-shrink-0"
+      class="compact-only bg-slate-800 p-2.5 border-b border-slate-700 flex justify-between items-center z-50 flex-shrink-0"
     >
       <div>
         <h1 class="text-xs font-bold text-sky-400">Balon Studio 3D</h1>
@@ -438,7 +500,8 @@
               <input type="range" id="rotTouch" min="0" max="360" value="0" oninput="setRotTouch(this.value)" class="w-full accent-sky-500" />
             </div>
           </div>
-          <p class="text-[8px] text-slate-400 text-center">💡 Sentuh & geser gambar di canvas untuk memindahkan posisi. Pakai 2 jari untuk zoom/skala.</p>
+          <div class="flex items-center gap-2 bg-slate-900 px-2 py-1 rounded border border-slate-700 text-[9px] text-slate-300"><span>📐 Ukuran:</span><input type="range" id="scaleTouch" min="5" max="800" value="100" oninput="setScaleTouch(this.value)" onchange="saveHistory()" class="w-full accent-sky-500" /></div>
+          <p class="text-[8px] text-slate-400 text-center">💡 Geser 1 jari untuk memindah gambar, cubit 2 jari untuk memperbesar/memperkecil.</p>
         </div>
 
         <!-- FLOATING TOOLBAR MODE KUAS (MUNCUL PAS MODE CORET) -->
@@ -447,12 +510,8 @@
           class="absolute bottom-3 left-2 right-2 z-30 bg-slate-800/90 backdrop-blur p-2 rounded-lg border border-slate-700 shadow-xl flex items-center justify-between gap-2"
         >
           <div class="flex items-center gap-1.5">
-            <button
-              onclick="document.getElementById('drawColor').click()"
-              class="w-7 h-7 rounded border border-slate-600 flex items-center justify-center bg-slate-900"
-            >
-              <div id="colorIndicatorFS" class="w-4 h-4 rounded-full bg-red-500"></div>
-            </button>
+            <label class="relative w-10 h-10 rounded-lg border border-slate-600 flex items-center justify-center bg-slate-900 flex-shrink-0"><div id="colorIndicatorFS" class="w-6 h-6 rounded-full" style="background:#ef4444"></div><input type="color" id="drawColorFS" value="#ef4444" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" /></label>
+            <div id="swatches"></div>
             <div class="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded border border-slate-700">
               <span class="text-[9px] text-slate-400">Ukuran:</span>
               <input
@@ -485,8 +544,9 @@
           id="viewportViewport"
           class="w-full h-full flex items-center justify-center cursor-crosshair"
         >
+          <div id="zoomCtl" class="absolute right-2 top-2 z-20 flex flex-col gap-1.5"><button onclick="zoomBy(1.25)" aria-label="Perbesar">＋</button><button onclick="zoomBy(0.8)" aria-label="Perkecil">－</button><button onclick="fitCanvasView()" aria-label="Pas layar">⤢</button></div>
           <div
-            id="canvasTransformWrapper"
+          id="canvasTransformWrapper"
             class="origin-center transition-transform duration-75 relative"
           >
             <canvas
@@ -574,6 +634,13 @@
         </div>
       </div>
     </div>
+
+    <nav id="bottomNav" class="compact-only">
+      <button data-view="motif" onclick="setView('motif')"><span>✏️</span>Kanvas</button>
+      <button data-view="td" onclick="setView('td')"><span>🎈</span>3D</button>
+      <button data-view="pola" onclick="setView('pola')"><span>✂️</span>Pola</button>
+      <button data-view="atur" onclick="setView('atur')"><span>⚙️</span>Atur</button>
+    </nav>
 
     <!-- HIDDEN TEMPLATE PDF -->
     <div class="fixed top-[-9999px] left-[-9999px]">
@@ -679,17 +746,17 @@
       // TOGGLE SIDEBAR MOBILE
       const btnToggle = document.getElementById("btnToggleSidebar");
       const sidebar = document.getElementById("sidebar");
-      btnToggle.addEventListener("click", () => {
-        sidebar.classList.toggle("hidden");
-      });
+      btnToggle.addEventListener("click", () => setView("atur"));
 
       function toggleElementFullscreen(elem) {
-        if (!document.fullscreenElement) {
-          if (elem.requestFullscreen) elem.requestFullscreen();
-          else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+        const can = elem.requestFullscreen || elem.webkitRequestFullscreen;
+        if (can) {
+          if (!(document.fullscreenElement || document.webkitFullscreenElement)) can.call(elem);
+          else (document.exitFullscreen || document.webkitExitFullscreen).call(document);
         } else {
-          if (document.exitFullscreen) document.exitFullscreen();
+          elem.classList.toggle("fakeFS"); // iPhone Safari: fullscreen via CSS
         }
+        setTimeout(() => { triggerResizeEvent(); if (!userZoomed) fitCanvasView(); }, 150);
       }
 
       document.getElementById("btnFullscreen2D").addEventListener("click", () => {
@@ -833,6 +900,7 @@
       camera.position.set(0, 0, 10);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(renderer.domElement);
 
@@ -944,75 +1012,6 @@
       parentContainer.addEventListener("contextmenu", (e) =>
         e.preventDefault(),
       );
-
-      // TOUCH GESTURE HANDLING UNTUK 3 MODE
-      let touchStartX = 0, touchStartY = 0;
-      let initialPinchDist = 0;
-      let initialScale = 0.5;
-      let isDraggingLayer = false;
-      let layerStartX = 0, layerStartY = 0;
-
-      parentContainer.addEventListener(
-        "touchstart",
-        (e) => {
-          if (currentMode === "pan" || e.touches.length === 2) {
-            isPanning = true;
-            touchStartX = (e.touches[0].clientX + (e.touches[1] ? e.touches[1].clientX : e.touches[0].clientX)) / (e.touches[1] ? 2 : 1) - panX;
-            touchStartY = (e.touches[0].clientY + (e.touches[1] ? e.touches[1].clientY : e.touches[0].clientY)) / (e.touches[1] ? 2 : 1) - panY;
-
-            if (e.touches.length === 2) {
-              initialPinchDist = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY,
-              );
-              initialScale = scale;
-            }
-          } else if (currentMode === "layer" && activeLayerIndex >= 0 && e.touches.length === 1) {
-            isDraggingLayer = true;
-            const pos = getCanvasPos(e);
-            const layer = imageLayers[activeLayerIndex];
-            layerStartX = pos.x - (canvas2d.width / 2 + layer.posX);
-            layerStartY = pos.y - (canvas2d.height / 2 + layer.posY);
-          }
-        },
-        { passive: false },
-      );
-
-      parentContainer.addEventListener(
-        "touchmove",
-        (e) => {
-          if (isPanning && (currentMode === "pan" || e.touches.length === 2)) {
-            e.preventDefault();
-            panX = (e.touches[0].clientX + (e.touches[1] ? e.touches[1].clientX : e.touches[0].clientX)) / (e.touches[1] ? 2 : 1) - touchStartX;
-            panY = (e.touches[0].clientY + (e.touches[1] ? e.touches[1].clientY : e.touches[0].clientY)) / (e.touches[1] ? 2 : 1) - touchStartY;
-
-            if (e.touches.length === 2 && initialPinchDist > 0) {
-              const currentDist = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY,
-              );
-              const zoomFactor = currentDist / initialPinchDist;
-              scale = Math.min(Math.max(initialScale * zoomFactor, 0.2), 3.0);
-            }
-            applyTransform();
-          } else if (isDraggingLayer && currentMode === "layer" && activeLayerIndex >= 0) {
-            e.preventDefault();
-            const pos = getCanvasPos(e);
-            const layer = imageLayers[activeLayerIndex];
-            layer.posX = Math.round(pos.x - canvas2d.width / 2 - layerStartX);
-            layer.posY = Math.round(pos.y - canvas2d.height / 2 - layerStartY);
-            renderComposite();
-          }
-        },
-        { passive: false },
-      );
-
-      parentContainer.addEventListener("touchend", () => {
-        if (isDraggingLayer) saveHistory();
-        isPanning = false;
-        isDraggingLayer = false;
-        initialPinchDist = 0;
-      });
 
       let renderPanelsScheduled = false;
 
@@ -1244,40 +1243,100 @@
         };
       }
 
-      ["mousedown", "touchstart"].forEach((evt) => {
-        canvas2d.addEventListener(evt, (e) => {
-          if (currentMode !== "draw") return;
-          if (e.type === "mousedown" && e.button !== 0) return;
-          if (e.touches && e.touches.length > 1) return;
-          isDrawing = true;
-          const pos = getCanvasPos(e);
+      // INPUT TERPADU (jari / stylus / mouse) via Pointer Events
+      const vpEl = document.getElementById("viewportViewport");
+      const ptrs = new Map();
+      let gesture = null, strokeLast = null, strokeMid = null, dragLayer = null, panDrag = null, userZoomed = false;
+
+      function pinchInfo() {
+        const [a, b] = [...ptrs.values()];
+        return { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+      }
+
+      vpEl.addEventListener("pointerdown", (e) => {
+        if (e.target.closest("#zoomCtl")) return;
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        vpEl.setPointerCapture(e.pointerId);
+        ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        dragLayer = panDrag = null;
+        if (ptrs.size >= 2) {
+          if (isDrawing) { isDrawing = false; restoreHistoryState(); } // buang coretan tak sengaja saat cubit
+          const l = imageLayers[activeLayerIndex];
+          gesture = { ...pinchInfo(), scale, px: panX, py: panY, ls: l ? l.scale : 100 };
+          return;
+        }
+        const p = getCanvasPos(e);
+        if (currentMode === "draw") {
+          isDrawing = true; strokeLast = strokeMid = p;
+          drawCtx.fillStyle = drawColorInput.value;
           drawCtx.beginPath();
-          drawCtx.moveTo(pos.x, pos.y);
-        });
-      });
-
-      ["mousemove", "touchmove"].forEach((evt) => {
-        canvas2d.addEventListener(evt, (e) => {
-          if (currentMode !== "draw" || !isDrawing) return;
-          if (e.touches && e.touches.length > 1) return;
-          const pos = getCanvasPos(e);
-          drawCtx.strokeStyle = document.getElementById("drawColor").value;
-          drawCtx.lineWidth = document.getElementById("brushSize").value;
-          drawCtx.lineCap = "round";
-          drawCtx.lineTo(pos.x, pos.y);
-          drawCtx.stroke();
+          drawCtx.arc(p.x, p.y, brushSizeInput.value / 2, 0, Math.PI * 2);
+          drawCtx.fill();
           renderComposite();
-        });
+        } else if (currentMode === "layer" && activeLayerIndex >= 0) {
+          const l = imageLayers[activeLayerIndex];
+          dragLayer = { x: p.x - l.posX, y: p.y - l.posY };
+        } else if (currentMode === "pan") {
+          panDrag = { x: e.clientX - panX, y: e.clientY - panY };
+        }
       });
 
-      ["mouseup", "touchend"].forEach((evt) => {
-        window.addEventListener(evt, () => {
-          if (isDrawing) {
-            isDrawing = false;
-            saveHistory();
+      vpEl.addEventListener("pointermove", (e) => {
+        const q = ptrs.get(e.pointerId);
+        if (!q) return;
+        q.x = e.clientX; q.y = e.clientY;
+        if (ptrs.size >= 2 && gesture) {
+          const g = pinchInfo(), f = g.d / gesture.d;
+          if (currentMode === "layer" && activeLayerIndex >= 0) {
+            imageLayers[activeLayerIndex].scale = Math.min(800, Math.max(5, Math.round(gesture.ls * f)));
+            updateControlsUI(); renderComposite();
+          } else {
+            scale = Math.min(3, Math.max(0.1, gesture.scale * f));
+            panX = gesture.px + (g.mx - gesture.mx);
+            panY = gesture.py + (g.my - gesture.my);
+            userZoomed = true; applyTransform();
           }
-        });
+          return;
+        }
+        if (currentMode === "draw" && isDrawing) {
+          drawCtx.strokeStyle = drawColorInput.value;
+          drawCtx.lineWidth = brushSizeInput.value;
+          drawCtx.lineCap = drawCtx.lineJoin = "round";
+          const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+          (evs.length ? evs : [e]).forEach((ev) => {
+            const p = getCanvasPos(ev);
+            const mid = { x: (strokeLast.x + p.x) / 2, y: (strokeLast.y + p.y) / 2 };
+            drawCtx.beginPath();
+            drawCtx.moveTo(strokeMid.x, strokeMid.y);
+            drawCtx.quadraticCurveTo(strokeLast.x, strokeLast.y, mid.x, mid.y);
+            drawCtx.stroke();
+            strokeLast = p; strokeMid = mid;
+          });
+          renderComposite();
+        } else if (dragLayer) {
+          const p = getCanvasPos(e), l = imageLayers[activeLayerIndex];
+          l.posX = Math.round(p.x - dragLayer.x);
+          l.posY = Math.round(p.y - dragLayer.y);
+          renderComposite();
+        } else if (panDrag) {
+          panX = e.clientX - panDrag.x; panY = e.clientY - panDrag.y;
+          userZoomed = true; applyTransform();
+        }
       });
+
+      function endPointer(e) {
+        if (!ptrs.has(e.pointerId)) return;
+        ptrs.delete(e.pointerId);
+        if (gesture && ptrs.size < 2) {
+          if (currentMode === "layer") saveHistory();
+          gesture = null;
+        }
+        if (isDrawing && ptrs.size === 0) { isDrawing = false; saveHistory(); }
+        if (dragLayer) { dragLayer = null; saveHistory(); }
+        panDrag = null;
+      }
+      vpEl.addEventListener("pointerup", endPointer);
+      vpEl.addEventListener("pointercancel", endPointer);
 
       document.getElementById("brushSize").addEventListener("input", (e) => {
         document.getElementById("lblBrushSize").innerText = e.target.value;
@@ -1511,6 +1570,7 @@
           document.getElementById("lblActiveLayerName").innerText = `📷 ${layer.name}`;
           document.getElementById("chkAutoRepeatTouch").checked = layer.autoRepeat;
           document.getElementById("rotTouch").value = layer.rot;
+          document.getElementById("scaleTouch").value = layer.scale;
           if (currentMode === "layer") document.getElementById("layerTouchBar").classList.remove("hidden");
         } else {
           document.getElementById("layerTouchBar").classList.add("hidden");
@@ -1601,6 +1661,7 @@
       }
 
       function triggerResizeEvent() {
+        if (!container.clientHeight || !container.clientWidth) return;
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
@@ -1768,13 +1829,48 @@
         .getElementById("chkWireframe")
         .addEventListener("change", build3DBalloon);
 
-      window.addEventListener("resize", triggerResizeEvent);
+      new ResizeObserver(triggerResizeEvent).observe(container);
+      new ResizeObserver(() => { if (compactMQ.matches && !userZoomed) fitCanvasView(); }).observe(vpEl);
 
       function animate() {
         requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
       }
+
+      // ===== TAMPILAN / ZOOM / WARNA (mobile) =====
+      const compactMQ = window.matchMedia("(max-width: 767px), (max-height: 480px)");
+
+      function setScaleTouch(v) {
+        if (activeLayerIndex >= 0) { imageLayers[activeLayerIndex].scale = parseInt(v); renderComposite(); }
+      }
+      function zoomBy(f) { scale = Math.min(3, Math.max(0.1, scale * f)); userZoomed = true; applyTransform(); }
+      function fitCanvasView() {
+        const w = vpEl.clientWidth, h = vpEl.clientHeight;
+        if (!w || !h) return;
+        scale = (Math.min(w, h) / canvas2d.width) * 0.96;
+        panX = panY = 0; userZoomed = false; applyTransform();
+      }
+      function setView(v) {
+        document.body.dataset.view = v;
+        document.querySelectorAll("#bottomNav button").forEach((b) => b.classList.toggle("navOn", b.dataset.view === v));
+        requestAnimationFrame(() => {
+          triggerResizeEvent();
+          if (v === "motif" && compactMQ.matches && !userZoomed) fitCanvasView();
+        });
+      }
+
+      const drawColorFS = document.getElementById("drawColorFS");
+      function setColor(c) { drawColorInput.value = c; drawColorFS.value = c; colorIndicator.style.backgroundColor = c; }
+      drawColorFS.addEventListener("input", (e) => setColor(e.target.value));
+      drawColorInput.addEventListener("input", (e) => { drawColorFS.value = e.target.value; });
+      ["#ef4444", "#f59e0b", "#22c55e", "#0ea5e9", "#8b5cf6", "#111827", "#ffffff"].forEach((c) => {
+        const b = document.createElement("button");
+        b.style.cssText = `background:${c};width:30px;height:30px;min-width:30px;min-height:30px;padding:0;border-radius:50%;border:2px solid #64748b`;
+        b.setAttribute("aria-label", "Warna " + c);
+        b.onclick = () => setColor(c);
+        document.getElementById("swatches").appendChild(b);
+      });
 
       // INIT
       setupResizable();
@@ -1783,6 +1879,8 @@
       drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
       setInteractionMode("draw");
       saveHistory();
+      setView("motif");
+      if (compactMQ.matches) fitCanvasView();
       animate();
     </script>
   </body>
